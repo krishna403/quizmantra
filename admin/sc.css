@@ -1,0 +1,51 @@
+div#body1{background-color:#36AE79;}
+td#col3{margin:1% auto auto 76%; display:inline; float:right;}
+p#para1{font-family:monospace,sans-serif;}
+div#header1{background-color:rgb(240,248,245);}
+td#col4{text-align:left;}
+h2#head1{text-align:center;}
+td#col5{margin:0% auto auto 30%; display:inline;}
+p#para2{text-align:right;font-size:120% ;display:inline;}
+div#body3{background-color:rgb(240,230,245);}
+div#formbody{background-color:rgb(240,248,245);}
+td#col6{display:inline;}
+div#body5{background-color: rgb(232, 235, 252);text-align:left;}
+p#downiframe{margin:1%; display:inline;}
+div#footer{background-color:rgb(12, 173, 218);color: #80ADDA;text-align: center;}
+p#downmail{text-align: center;}
+div#contactbody{background-color:rgb(240,248,245);}
+//div#loginarea{float: right;}
+
+fieldset.loginwall{background-image:url(images/homepagepic.jpg); width:98.5%;}
+fieldset.loginwall2{background-image:url(images/brain2.jpg); width:98.5%;}
+fieldset.loginwall3{background-image:url(images/woodboard4.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall4{background-image:url(images/blueback.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall5{background-image:url(images/editprofile.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall6{background-image:url(images/woodboard3.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall7{background-image:url(images/6.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall8{background-image:url(images/7.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall9{background-image:url(images/10.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall10{background-image:url(images/9.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall12{background-image:url(images/12.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+fieldset.loginwall13{background-image:url(images/13.jpg); background-size: 100% 100%;background-repeat: no-repeat;}
+body#test{background-image:url(images/brain2.jpg); width:100%;}
+body#test2{background-image:url(images/resultboard3.jpg); width:100%;}
+h3.regheading{text-align: center;}
+div#loginarea2{float:left;}
+div#logfooter{background-color:#36AE79;color: #80ADDA;}
+span#dt{font-family: sans-serif;float: right;}
+span#headertab{font-family: sans-serif;background-color:rgb(12, 173, 218);float: right;}
+//table#menu sbbtn{color: #36AE79;height: 40px;width:180px;}
+//body.register{font}
+
+
+
+
+html{background-color:rgb(238,238,238);}
+//div#linkdiv{font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;margin-left: 600px;}
+
+li p:hover{color:rgb(0,176,186);text-decoration:none;font-style:normal;text-shadow:2px 2px 3px blanchedalmond;font-size: 32px;}
+li p{text-align: center;font-size:30px;}
+
+
+
