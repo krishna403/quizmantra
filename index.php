@@ -132,7 +132,8 @@
 
                                     <tr>
                                         <td style="padding-bottom: 200px; padding-right: 8%;" colspan="2">
-                                            <input type="submit" tabindex="3" value="Log In" name="stdsubmit" class="subbtn" style="color: #36AE79;height: 40px;width: 180px" />
+                                            <input type="submit" tabindex="3" value="Log In" name="stdsubmit" class="subbtn" style="color: #36AE79;height: 40px;width: 180px" /> |
+                                            <a href=index.php> Reset</a>
                                         </td><td></td>
                                     </tr>
                                  </table>

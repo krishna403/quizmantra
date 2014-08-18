@@ -63,7 +63,7 @@ include('../header.php');
     
        else{
            
-            $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password']) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "' where stdid='" . htmlspecialchars($_REQUEST['student'], ENT_QUOTES) . "';";
+            $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password']) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "',tc='" . htmlspecialchars($_REQUEST['tcbool'], ENT_QUOTES) .  "' where stdid='" . htmlspecialchars($_REQUEST['student'], ENT_QUOTES) . "';";
                 if (!@executeQuery($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
@@ -226,7 +226,7 @@ include('../header.php');
                 
                 
                 else if (isset($_REQUEST['edit'])) {
-                    $result = executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode from student where stdname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                    $result = executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                     if (mysql_num_rows($result) == 0) {
                         header('Location: usermng.php');
                     }
@@ -269,10 +269,26 @@ include('../header.php');
                             <td><input type="hidden" name="student" value="<?php echo htmlspecialchars_decode($r['stdid'], ENT_QUOTES); ?>"/><input type="text" name="pin" value="<?php echo $r['pincode']; ?>" size="16" onkeyup="isnum(this)" /></td>
                         </tr>
                         
+                        
+                        <tr><td>Teacher : </td>
+                                  <td> <input type="radio" name="tcbool" value='0' <?php if ($r['tc'] == '0') {
+                                           echo "checked";
+                                      } ?>> No</input></td>
+
+                                <td> <input type="radio" name="tcbool" value='1' <?php if ($r['tc'] == '1') {
+                                     echo "checked";
+                                 } ?>> Yes</input></td>
+
+
+                         </tr>
+                        
+                        
                         <tr>
                             <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validateform('usermng')" title="Save the changes"  style="color: #36AE79;height: 40px;width: 180px" /></td>
                              <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel"  style="color: #36AE79;height: 40px;width: 180px" /></td>
-                         </tr>                       
+                         </tr>  
+                         
+                         
 
                     </table>
                <?php

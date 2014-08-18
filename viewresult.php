@@ -380,9 +380,24 @@ session_start();
                                                         echo"<td class=\"tddata\"><a title=\"Details\" href=\"viewresult.php?details=".$r['testid']."&attempt=".$r['attemptid']."\"><img src=\"images/details.gif\" height=\"40\" width=\"130\" alt=\"Details\" /></a></td>";
                                                        // $_SESSION['attid']=$r['attemptid'];
                                                         
-                                                        $attemptno=$r['attemptid']%10;
-                                                        echo "<td>".$attemptno."</td></tr>";
-                                                        
+                                                        if($r['testid']<10 && $_SESSION['stdid']<10){
+                                                             $attemptno=$r['attemptid']%10;
+                                                         }
+                                                         
+                                                         $concatids=$_SESSION['stdid'].$r['testid'];
+                                                         $concatids=  strrev($concatids);
+                                                         $revattempt=strrev($r['attemptid']);
+                                                         $lengthattempt=strlen($r['attemptid']);
+                                                         
+                                                         $position= strpos($revattempt,$concatids);
+                                                         $finalpos=$lengthattempt-$position;
+                                                         
+                                                         $att=  substr($r['attemptid'],$finalpos);                                                         
+                                                        // echo $position;
+                                                         
+                                                       
+                                                        echo "<td>".$attemptno.", ".$att."</td></tr>";
+                                                      //  $str
                                                         $attemptarr[$k]=(int)$attemptno;
                                                                 
                                                      $k++;

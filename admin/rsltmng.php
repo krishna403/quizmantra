@@ -125,15 +125,15 @@ include('../header.php');
                                 <?php
                                 
                                 
-                                $attempt=executeQuery("select s.stdname,s.emailid,IFNULL((select sum(q.marks) from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid and sq.stdanswer=q.correctanswer),0) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
-                                 while($r1=mysql_fetch_array($attempt)) {
-                                     
+                                $attempt=executeQuery("(select attemptid from studentquestion as sq,question as q where sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
+                                 while($rq=mysql_fetch_array($attempt)) {
+                                     echo $rq['attemptid'];
                                  }
                                 
                                 
                                 
 
-                                 $result1=executeQuery("select attemptid from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid and sq.stdanswer=q.correctanswer),0) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
+                                 $result1=executeQuery("select s.stdname,s.emailid,IFNULL((select sum(q.marks) from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid and sq.stdanswer=q.correctanswer),0) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
 
                                    if(mysql_num_rows($result1)==0) {
                                         echo"<h3 style=\"color:#0000cc;text-align:center;\">No Students Yet Attempted this Test!</h3>";

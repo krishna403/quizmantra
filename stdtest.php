@@ -43,6 +43,8 @@ error_reporting(0);
             
                 else{
                     
+                    //$rem=0;
+                    
                 $result=executeQuery("select * from question where testid=" . $_SESSION['testid'] . " order by qnid;");
                 
                     if (mysql_num_rows($result) == 0) {
@@ -71,19 +73,50 @@ error_reporting(0);
                             $resulta = executeQuery("select attemptid from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . ";");
                                 while ($ra=mysql_fetch_array($resulta)){
 
-                                     $rem=(int)$ra['attemptid']%10;
-                                     $rem++;
-                                     $val=(int)$ra['attemptid']/10;
-                                     $attempt=((int)$val*10+$rem);
+                                    //echo $_SESSION['testid'];
+                                   // echo $_SESSION['stdid'];
+                                      $x=$ra['attemptid'];
+                                     
+                                    
+                                    if($x<10){
+                                       $rem=(int)$ra['attemptid']%10;
+                                        $rem++;
+                                        $val=(int)$ra['attemptid']/10;
+                                        $attempt=((int)$val*10+$rem);
+                                      //  $attempt=(int)($val.$rem);
+                                    }
+                                    
+                                    else if($x<100 && $x>9){
+                                        $rem=(int)$ra['attemptid']%100;
+                                        $rem++;
+                                        $val=(int)$ra['attemptid']/100;
+                                        $attempt=((int)$val*100+$rem);
+                                    }
+                                    
+                                    else if($x<1000 && $x>99){
+                                        $rem=(int)$ra['attemptid']%1000;
+                                        $rem++;
+                                        $val=(int)$ra['attemptid']/1000;
+                                        $attempt=((int)$val*1000+$rem);
+                                    }
+                                    
+                                    else if($x<10000 && $x>999){
+                                        $rem=(int)$ra['attemptid']%10000;
+                                        $rem++;
+                                        $val=(int)$ra['attemptid']/10000;
+                                        $attempt=((int)$val*10000+$rem);
+                                    }
 
                                 } 
+                                
                           }
                           
                           else{
                                $attempt=$_SESSION['stdid'].$_SESSION['testid'].'1';
                           }
                              
-                          $_SESSION['attempt']=$attempt;   
+                          $_SESSION['attempt']=$attempt;
+                          
                      
                           
                         if(!executeQuery("insert into studenttest values(". $_SESSION['stdid'] . "," . $_SESSION['testid'] . ",(select CURRENT_TIMESTAMP),date_add((select CURRENT_TIMESTAMP),INTERVAL (select duration from test where testid=" . $_SESSION['testid'] . ") MINUTE),0,'inprogress',".(int)$attempt.")"))
@@ -271,7 +304,7 @@ error_reporting(0);
                 $result = executeQuery("select t.*,s.subname from test as t, subject as s where s.subid=t.subid AND CURRENT_TIMESTAMP<t.testto and t.totalquestions=(select count(*) from question where testid=t.testid) AND t.testid=" . $_SESSION['testid'] . ";");// and NOT EXISTS(select stdid,testid from studenttest where testid=t.testid and stdid=" . $_SESSION['stdid'] . ")
                
                 if (mysql_num_rows($result) == 0) {
-                    echo $_SESSION['testid'];
+                    echo "Test ID : ".$_SESSION['testid'];
                     echo"<h3 style=\"color:#0000cc;text-align:center;\">Sorry...! For this moment, You have not Offered to take any tests.</h3>";
                 }
 

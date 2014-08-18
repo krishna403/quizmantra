@@ -1,8 +1,8 @@
 
            function isalphanum(ele)
                 {
-                    var r=/\W$/i;
-                    if(r.test(ele.value))
+                    var r=/^[ A-Za-z0-9_@./#&+-]*$/i;// /\W$/i;
+                    if(!r.test(ele.value))
                      {
                          alert("This Field allows Only Alpha Numeric characters.");
                          ele.value="";
