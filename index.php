@@ -59,7 +59,9 @@
         // $result=executeQuery("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' ");
            if(mysql_num_rows($result)>0){
 
-              $r=mysql_fetch_array($result);
+             // $r=mysql_fetch_array($result);
+               
+               $r=$db->fetch_array();
              
               
              if(strcmp(htmlspecialchars($r['std'],ENT_QUOTES),(htmlspecialchars($_REQUEST['password'],ENT_QUOTES)))==0){

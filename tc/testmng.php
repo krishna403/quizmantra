@@ -3,7 +3,7 @@
 error_reporting(0);
 session_start();
 
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 
  ?>
@@ -33,7 +33,7 @@ include('../header.php');
                 if (is_numeric($variable)){ 
                     $hasvar = true;
 
-                    if (!@executeQuery("delete from test where testid=$variable and teacherid=" . $_SESSION['tcid'] . ";")) {
+                    if (!@$db->query("delete from test where testid=$variable and teacherid=" . $_SESSION['tcid'] . ";")) {
                             $_GLOBALS['message'] = mysql_errno();
                     }
                 }
@@ -61,13 +61,13 @@ include('../header.php');
         
         else {
             $query = "update test set testname='" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "',testdesc='" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',subid=" . $_REQUEST['subject'] . ",testfrom='" . $fromtime . "',testto='" . $totime . "',duration=" . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . ",totalquestions=" . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",testcode='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'where testid=" . $_REQUEST['testid'] . " and teacherid=" . $_SESSION['tcid'] . ";";
-            if (!@executeQuery($query))
+            if (!@$db->query($query))
                 $_GLOBALS['message'] = mysql_error();
             else
                 $_GLOBALS['message'] = "Test Information is Successfully Updated.";
         }
         
-        closedb();
+        $db->_destruct();
    }
    
    
@@ -88,7 +88,7 @@ include('../header.php');
         }
 
 
-        $result = executeQuery("select max(testid) as tst from test");
+        $result = $db->query("select max(testid) as tst from test");
         $r = mysql_fetch_array($result);
             
          if (is_null($r['tst']))
@@ -102,7 +102,7 @@ include('../header.php');
             
             else if ($noerror) {
                 $query = "insert into test values($newstd,'" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',(select curDate()),(select curTime())," . $_REQUEST['subject'] . ",'" . $fromtime . "','" . $totime . "'," . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . "," . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",0,'" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'," . $_SESSION['tcid'] . ")";
-                    if (!@executeQuery($query)) {
+                    if (!@$db->query($query)) {
                             if (mysql_errno () == 1062) //duplicate value
                                 $_GLOBALS['message'] = "Given Test Name voilates some constraints, please try with some other name.";
                             else
@@ -111,14 +111,14 @@ include('../header.php');
                     else
                         $_GLOBALS['message'] = $_GLOBALS['message'] . "<br/>Successfully New Test is Created.";
             }
-         closedb();
+         $db->_destruct();
       }
       
       
      else if (isset($_REQUEST['manageqn'])) {
          
             $testname = $_REQUEST['manageqn'];
-            $result = executeQuery("select testid from test where testname='$testname' and teacherid=" . $_SESSION['tcid'] . ";");
+            $result = $db->query("select testid from test where testname='$testname' and teacherid=" . $_SESSION['tcid'] . ";");
 
                 if ($r = mysql_fetch_array($result)) {
                     $_SESSION['testname'] = $testname;
@@ -217,12 +217,12 @@ include('../header.php');
                                                 <select name="subject">
                                                     <option selected value="<Choose the Subject>">&lt;Choose the Subject&gt;</option>
                                     <?php
-                                            $result = executeQuery("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
+                                            $result = $db->query("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
                                             while ($r = mysql_fetch_array($result)) {
 
                                                 echo "<option value=\"" . $r['subid'] . "\">" . htmlspecialchars_decode($r['subname'], ENT_QUOTES) . "</option>";
                                             }
-                                            closedb();
+                                          $db->_destruct();
                                     ?>
                                                 </select>
                                             </td>
@@ -271,7 +271,7 @@ include('../header.php');
                     
                    else if (isset($_REQUEST['edit'])) {
                        
-                        $result = executeQuery("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and t.teacherid=" . $_SESSION['tcid'] . ";");
+                        $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and t.teacherid=" . $_SESSION['tcid'] . ";");
                         if (mysql_num_rows($result) == 0) {
                             header('Location: testmng.php');
                         } 
@@ -285,7 +285,7 @@ include('../header.php');
                                                     <td>
                                                         <select name="subject">
                                          <?php
-                                                $result = executeQuery("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
+                                                $result = $db->query("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
 
                                                 while ($r1 = mysql_fetch_array($result)) {
 
@@ -295,7 +295,7 @@ include('../header.php');
                                                     else
                                                         echo "<option value=\"" . $r1['subid'] . "\">" . htmlspecialchars_decode($r1['subname'], ENT_QUOTES) . "</option>";
                                                 }
-                                                closedb();
+                                               $db->_destruct();;
                                          ?>
                                                     </select>
                                                         </td>
@@ -338,13 +338,13 @@ include('../header.php');
 
                                                 </table>
                                <?php
-                                       closedb();
+                                       $db->_destruct();
                                       }
                               }
 
                else {
                    
-                              $result = executeQuery("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid and t.teacherid=" . $_SESSION['tcid'] . " order by t.testdate desc,t.testtime desc;");
+                              $result = $db->query("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid and t.teacherid=" . $_SESSION['tcid'] . " order by t.testdate desc,t.testtime desc;");
                                 
                                       if(mysql_num_rows($result) == 0){
                                                     echo "<h3 style=\"color:#0000cc;text-align:center;\">No Tests Yet..!</h3>";
@@ -378,7 +378,7 @@ include('../header.php');
                                                 </table>
                           <?php
                                     }
-                                    closedb();
+                                   $db->_destruct();
                                 }
                           ?>
                

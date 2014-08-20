@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 
  ?>
@@ -35,7 +35,7 @@ include('../header.php');
         else{
          $query="update student SET stdname='".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."', stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."',emailid='".htmlspecialchars($_REQUEST['email'],ENT_QUOTES)."',contactno='".htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES)."',address='".htmlspecialchars($_REQUEST['address'],ENT_QUOTES)."',city='".htmlspecialchars($_REQUEST['city'],ENT_QUOTES)."',pincode='".htmlspecialchars($_REQUEST['pin'],ENT_QUOTES)."' WHERE stdid='".$_REQUEST['tc']."';";
           
-             if(!@executeQuery($query))
+             if(!@$db->query($query))
                $_GLOBALS['message']=mysql_error();
             else{
                
@@ -44,7 +44,7 @@ include('../header.php');
              
             }
         }
-    closedb();
+    $db->_destruct();
 
 }
 
@@ -92,7 +92,7 @@ include('../header.php');
            <?php if(isset($_SESSION['tcname'])) {
            
           
-                        $result=executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode FROM student where stdname='".$_SESSION['tcname']."';");
+                        $result=$db->query("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode FROM student where stdname='".$_SESSION['tcname']."';");
                         if(mysql_num_rows($result)==0) {
                            header('Location: tcwelcome.php');
                         }
@@ -148,7 +148,7 @@ include('../header.php');
                                                 </tr></table>
                                        </div>
                   <?php
-                      closedb();
+                      $db->_destruct();
                    }
 
                 }

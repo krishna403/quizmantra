@@ -2,7 +2,7 @@
 
 error_reporting(0);
 session_start();
-      include_once '../oesdb.php';
+     // include_once '../oesdb.php';
       include('../header.php');
       
     ?>
@@ -31,7 +31,7 @@ session_start();
                if (is_numeric($variable)) { 
                    $hasvar = true;
 
-                   if (!@executeQuery("delete from subject where subid=$variable and teacherid=" . $_SESSION['tcid'] . ";")) {
+                   if (!@$db->query("delete from subject where subid=$variable and teacherid=" . $_SESSION['tcid'] . ";")) {
                            $_GLOBALS['message'] = mysql_errno();
                    }
                }
@@ -54,17 +54,17 @@ session_start();
          
          else{
              $query = "update subject set subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "', subdesc='" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'where subid=" . $_REQUEST['subject'] . " AND teacherid=" . $_SESSION['tcid'] . ";";
-                if (!@executeQuery($query))
+                if (!@$db->query($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
                     $_GLOBALS['message'] = "Subject Information is Successfully Updated.";
           } 
-        closedb();
+        $db->_destruct();
      }
      
      
       else if (isset($_REQUEST['savea'])){
-        $result=executeQuery("select max(subid) as sub from subject");
+        $result=$db->query("select max(subid) as sub from subject");
              $r=mysql_fetch_array($result);
              
                 if(is_null($r['sub']))
@@ -72,7 +72,7 @@ session_start();
                 else
                     $newstd=$r['sub'] + 1;
 
-                $result = executeQuery("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "' AND teacherid=" . $_SESSION['tcid'] . ";");
+                $result = $db->query("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "' AND teacherid=" . $_SESSION['tcid'] . ";");
 
                     if (empty($_REQUEST['subname']) || empty($_REQUEST['subdesc'])) {
                         $_GLOBALS['message'] = "Some of the required Fields are Empty";
@@ -84,13 +84,13 @@ session_start();
 
                     else {
                         $query = "insert into subject values($newstd,'" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'," . $_SESSION['tcid'] . ")";
-                        if (!@executeQuery($query)) {
+                        if (!@$db->query($query)) {
                                 $_GLOBALS['message'] = mysql_error ();
                         }
                         else
                             $_GLOBALS['message'] = "Successfully New Subject is Created.";
                     }
-            closedb();
+           $db->_destruct();
       }
   ?>
 
@@ -164,7 +164,7 @@ session_start();
     
                         else if(isset($_REQUEST['edit'])){
 
-                            $result = executeQuery("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and teacherid=" . $_SESSION['tcid'] . ";");
+                            $result = $db->query("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and teacherid=" . $_SESSION['tcid'] . ";");
                            
                             if (mysql_num_rows($result) == 0){
                                 header('submng.php');
@@ -184,13 +184,13 @@ session_start();
                                             </tr>
                                         </table>
                          <?php
-                                        closedb();
+                                       $db->_destruct();
                                     }
                             }
             
             else{
 
-                        $result = executeQuery("select * from subject where teacherid=" . $_SESSION['tcid'] . " order by subid;");
+                        $result = $db->query("select * from subject where teacherid=" . $_SESSION['tcid'] . " order by subid;");
                         
                         if (mysql_num_rows($result) == 0) {
                             echo "<h3 style=\"color:#0000cc;text-align:center;\">No Subjets Yet..!</h3>";
@@ -225,7 +225,7 @@ session_start();
                             </table>
                         <?php
                       }
-                   closedb();
+                  $db->_destruct();
                 }
                       
                 ?>
