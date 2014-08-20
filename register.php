@@ -3,7 +3,7 @@
 
     error_reporting(0);
     session_start();
-    include_once 'oesdb.php';
+  //  include_once 'oesdb.php';
     include('header.php');
     ?>
 <fieldset class='loginwall'>
@@ -13,14 +13,14 @@
         if(isset($_REQUEST['stdsubmit']))
         {
 
-                $result=executeQuery("select max(stdid) as std from student");
+                $result=$db->query("select max(stdid) as std from student");
                 $r=mysql_fetch_array($result);
                 if(is_null($r['std']))
                 $newstd=1;
                 else
                 $newstd=$r['std']+1;
 
-                $result=executeQuery("select stdname as std from student where stdname='".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."';");
+                $result=$db->query("select stdname as std from student where stdname='".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."';");
 
                if(empty($_REQUEST['cname'])||empty ($_REQUEST['password'])||empty ($_REQUEST['email']))
                {
@@ -32,7 +32,7 @@
                else
                {
                 $query="insert into student values($newstd,'".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['email'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['address'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['city'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['pin'],ENT_QUOTES)."','0')";
-                if(!@executeQuery($query))
+                if(!$db->query($query))
                            $_GLOBALS['message']=mysql_error();
                 else
                 {
@@ -41,7 +41,7 @@
                   // header('Location: index.php');
                 }
                }
-               closedb();
+              $db->_destruct();
         }
     
    ?>

@@ -2,7 +2,7 @@
 <?php
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
  include('../header.php');
 
  
@@ -35,7 +35,7 @@ include_once '../oesdb.php';
                     if (is_numeric($variable)) { 
                        $hasvar = true;
 
-                       if (!@executeQuery("delete from test where testid=$variable")) {
+                       if (!@$db->query("delete from test where testid=$variable")) {
                            if (mysql_errno () == 1451)
                                 $_GLOBALS['message'] = "Too Prevent accidental deletions, system will not allow propagated deletions.<br/><b>Help:</b> If you still want to delete this test, then first delete the questions that are associated with it.";
                            else
@@ -83,13 +83,13 @@ include_once '../oesdb.php';
                 else {
                     $query = "update test set testname='" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "',testdesc='" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',subid=" . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",testfrom='" . $fromtime . "',testto='" . $totime . "',duration=" . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . ",totalquestions=" . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",testcode='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'where testid=" . $_REQUEST['testid'] . ";";
                    
-                    if (!@executeQuery($query))
+                    if (!@$db->query($query))
                         $_GLOBALS['message'] = mysql_error();
                     else
                         $_GLOBALS['message'] = "Test Information is Successfully Updated.";
                 }
                 
-                closedb();
+                $db->_destruct();
         }
         
         
@@ -113,7 +113,7 @@ include_once '../oesdb.php';
 
 
 
-                       $result = executeQuery("select max(testid) as tst from test");
+                       $result = $db->query("select max(testid) as tst from test");
                        $r = mysql_fetch_array($result);
                        
                        
@@ -133,7 +133,7 @@ include_once '../oesdb.php';
                              
                                $query = "insert into test values($newstd,'" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',(select curDate()),(select curTime())," . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",'" . $fromtime . "','" . $totime . "'," . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . "," . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",0,'" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "',NULL)";
       
-                               if (!@executeQuery($query)) {
+                               if (!@$db->query($query)) {
                                    if (mysql_errno () == 1062)
                                        $_GLOBALS['message'] = "Given Test Name voilates some constraints, please try with some other name.";
                                    else
@@ -147,7 +147,7 @@ include_once '../oesdb.php';
                                    
                            }
    
-                  closedb();
+                  $db->_destruct();
 
                                
              }
@@ -156,7 +156,7 @@ include_once '../oesdb.php';
             else if(isset($_REQUEST['manageqn'])) {
 
                         $testname = $_REQUEST['manageqn'];
-                        $result = executeQuery("select testid from test where testname='" . htmlspecialchars($testname, ENT_QUOTES) . "';");
+                        $result = $db->query("select testid from test where testname='" . htmlspecialchars($testname, ENT_QUOTES) . "';");
 
                             if ($r = mysql_fetch_array($result)) {
                                 $_SESSION['testname']=$testname;
@@ -277,13 +277,13 @@ include_once '../oesdb.php';
                
 
                  <?php
-                        $result = executeQuery("select subid,subname from subject;");
+                        $result = $db->query("select subid,subname from subject;");
                         
                             while ($r = mysql_fetch_array($result)) {
                                 echo "<option value=\"" . $r['subid'] . "\">" . htmlspecialchars_decode($r['subname'], ENT_QUOTES) . "</option>";
                             }
                             
-                        closedb();
+                        $db->_destruct();
                 ?>
                                                 </select>
                                             </td>
@@ -338,7 +338,7 @@ include_once '../oesdb.php';
                     
                     else if (isset($_REQUEST['edit'])) {
 
-                        $result = executeQuery("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                        $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                         
                         if (mysql_num_rows($result) == 0) {
                             header('Location: testmng.php');
@@ -353,7 +353,7 @@ include_once '../oesdb.php';
                                             <td>
                                                 <select name="subject">
                    <?php
-                            $result = executeQuery("select subid,subname from subject;");
+                            $result = $db->query("select subid,subname from subject;");
                             
                             while ($r1 = mysql_fetch_array($result)) {
                                 if (strcmp($r['subname'], $r1['subname']) == 0)
@@ -361,7 +361,7 @@ include_once '../oesdb.php';
                                 else
                                     echo "<option value=\"" . $r1['subid'] . "\">" . htmlspecialchars_decode($r1['subname'], ENT_QUOTES) . "</option>";
                             }
-                            closedb();
+                          $db->_destruct();
                   ?>
                                                 </select>
                                             </td>
@@ -410,13 +410,13 @@ include_once '../oesdb.php';
 
                                     </table>
                 <?php
-                                              closedb();
+                                            $db->_destruct();
                                  }
                     }
 
                   else {
 
-                        $result = executeQuery("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid order by t.testdate desc,t.testtime desc;");
+                        $result = $db->query("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid order by t.testdate desc,t.testtime desc;");
                             
                         if (mysql_num_rows($result) == 0) {
                                  echo "<h3 style=\"color:#0000cc;text-align:center;\">No Tests Yet..!</h3>";
@@ -454,7 +454,7 @@ include_once '../oesdb.php';
                                                 </table>
            <?php
                                    }
-                                closedb();
+                               $db->_destruct();
                        }
               }
            ?>

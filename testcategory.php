@@ -2,7 +2,7 @@
 
 error_reporting(0);
   session_start();
-  include_once 'oesdb.php';
+  //include_once 'oesdb.php';
   include('header.php');
   
   
@@ -37,7 +37,7 @@ error_reporting(0);
                }
                
    
-      closedb();
+      $db->_destruct();
    }
   
  ?>
@@ -105,14 +105,14 @@ error_reporting(0);
 
                                                                             $cat=$_GET['cat']; 
 
-                                                                                    $quer2=executeQuery("SELECT subname,subid FROM subject");
+                                                                                    $quer2= $db->query("SELECT subname,subid FROM subject");
 
                                                                                     if(isset($cat)){
-                                                                                         $quer=executeQuery("SELECT testname,testid FROM test WHERE subid='$cat' ");
+                                                                                         $quer=$db->query("SELECT testname,testid FROM test WHERE subid='$cat' ");
                                                                                       }
 
                                                                                   //  else{
-                                                                                  //     $quer=executeQuery("SELECT testname FROM test WHERE subid='$cat' ");
+                                                                                  //     $quer=$db->query("SELECT testname FROM test WHERE subid='$cat' ");
                                                                                   //  } 
 
                                                                            echo "<form method=post name=f1 action=''>";

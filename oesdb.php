@@ -1,6 +1,6 @@
 
 
-<?php
+<?php/*
 include_once 'dbsettings.php';
 
 $conn=false;
@@ -23,6 +23,8 @@ function executeQuery($query)
         return $result;
 
 }
+
+
 function closedb()
 {
     global $conn;

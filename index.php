@@ -1,10 +1,10 @@
 
  <?php
-
       error_reporting(0);
       session_start();
-      include_once 'oesdb.php';
+    //  include_once 'oesdb.php';
       include('header.php');
+   //   include 'db/class.php';
   ?>
 
 
@@ -55,7 +55,8 @@
           
       else{ 
           
-         $result=executeQuery("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' ");
+         $result=$db->query("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' "); 
+        // $result=executeQuery("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' ");
            if(mysql_num_rows($result)>0){
 
               $r=mysql_fetch_array($result);
@@ -85,7 +86,8 @@
               $_GLOBALS['message']="Check Your user name and Password.";
             }
             
-          closedb();
+         // closedb();
+            $db->_destruct();
       }
       }
 

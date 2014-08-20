@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-include_once 'oesdb.php';
+//include_once 'oesdb.php';
 include('header.php');
 
 
@@ -66,12 +66,13 @@ include('header.php');
        else{
         $query="update student set stdname='".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."', stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."',emailid='".htmlspecialchars($_REQUEST['email'],ENT_QUOTES)."',contactno='".htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES)."',address='".htmlspecialchars($_REQUEST['address'],ENT_QUOTES)."',city='".htmlspecialchars($_REQUEST['city'],ENT_QUOTES)."',pincode='".htmlspecialchars($_REQUEST['pin'],ENT_QUOTES)."' where stdid='".$_REQUEST['student']."';";
         
-        if(!@executeQuery($query))
+        if(!$db->query($query))
            $_GLOBALS['message']=mysql_error();
         else
            $_GLOBALS['message']="Your Profile is Successfully Updated.";
        }
-    closedb();
+   // closedb();
+       $db->_destruct();
   }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -92,7 +93,7 @@ include('header.php');
       <div class="page">
           <?php
                        
-                        $result=executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode from student where stdname='".$_SESSION['stdname']."';");
+                        $result=$db->query("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode from student where stdname='".$_SESSION['stdname']."';");
                         if(mysql_num_rows($result)==0) {
                            header('Location: stdwelcome.php');
                         }
@@ -137,10 +138,11 @@ include('header.php');
 
             </table>
 <?php
-                        closedb();
+                      //  closedb();
+                      $db->_destruct();
                         }
                         
-                        }
+                   }
   ?>
       </div>
 

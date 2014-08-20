@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 
 ?>
@@ -32,7 +32,7 @@ include('../header.php');
                 if (is_numeric($variable)) { 
                     $hasvar = true;
 
-                    if (!@executeQuery("delete from subject where subid=$variable")) {
+                    if (!@$db->query("delete from subject where subid=$variable")) {
                             $_GLOBALS['message'] = mysql_errno();
                     }
                 }
@@ -56,18 +56,18 @@ include('../header.php');
             
             else{
                 $query = "update subject set subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "', subdesc='" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'where subid=" . $_REQUEST['subject'] . ";";
-                if (!@executeQuery($query))
+                if (!@$db->query($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
                     $_GLOBALS['message'] = "Subject Information is Successfully Updated.";
             }
-            closedb();
+            $db->_destruct();
         }
         
         
         else if (isset($_REQUEST['savea'])){
             
-            $result = executeQuery("select max(subid) as sub from subject");
+            $result = $db->query("select max(subid) as sub from subject");
             $r = mysql_fetch_array($result);
             
             if (is_null($r['sub']))
@@ -75,7 +75,7 @@ include('../header.php');
             else
                 $newstd=$r['sub']+1;
 
-            $result = executeQuery("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "';");
+            $result = $db->query("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "';");
             
             if (empty($_REQUEST['subname']) || empty($_REQUEST['subdesc'])) {
                 $_GLOBALS['message'] = "Some of the required Fields are Empty";
@@ -87,14 +87,14 @@ include('../header.php');
             
             else {
                 $query = "insert into subject values($newstd,'" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "',NULL)";
-                if (!@executeQuery($query)){
+                if (!@$db->query($query)){
                         $_GLOBALS['message'] = mysql_error();
                 }
                 
                 else
                     $_GLOBALS['message'] = "Successfully New Subject is Created.";
             }
-            closedb();
+            $db->_destruct();
         }
    ?>
 
@@ -177,7 +177,7 @@ include('../header.php');
                                         
                                             else if (isset($_REQUEST['edit'])){
 
-                                                $result = executeQuery("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                                                $result = $db->query("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                                                 
                                                     if (mysql_num_rows($result) == 0){
                                                         header('submng.php');
@@ -203,12 +203,12 @@ include('../header.php');
                                                                    </tr>
                                                                 </table>
                                             <?php
-                                                                closedb();
+                                                                $db->_destruct();
                                                           }
                                                 }
                                                 
                                              else{
-                                                    $result = executeQuery("select * from subject order by subid;");
+                                                    $result = $db->query("select * from subject order by subid;");
                                                     
                                                     if (mysql_num_rows($result) == 0){
                                                         echo "<h3 style=\"color:#0000cc;text-align:center;\">No Subjets Yet..!</h3>";
@@ -239,7 +239,7 @@ include('../header.php');
                                                         </table>
                                     <?php
                                                     }
-                                                    closedb();
+                                                    $db->_destruct();
                                                }
                                  }
                               ?>

@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-  include_once 'oesdb.php';
+  //include_once 'oesdb.php';
   include('header.php');
   ?>
 
@@ -55,10 +55,10 @@ session_start();
                     $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
                 }
                 
-                if(!executeQuery($query)){
+                if(!$db->query($query)){
                       $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
                 }
-               closedb();
+               $db->_destruct();
             }
             
             
@@ -110,10 +110,10 @@ session_start();
                     $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
                 }
                 
-                if(!executeQuery($query)){
+                if(!$db->query($query)){
                 $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
                 }
-                closedb();
+                $db->_destruct();
             }
         }
         
@@ -147,7 +147,7 @@ session_start();
                 $elapsed=time()-strtotime($_SESSION['starttime']);
                 if(((int)$elapsed/60)<(int)$_SESSION['duration'])
                 {
-                    $result=executeQuery("select TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%H') as hour,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%i') as min,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%s') as sec from studenttest where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid'].". AND attemptid=".$_SESSION['attempt'].";");
+                    $result=$db->query("select TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%H') as hour,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%i') as min,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%s') as sec from studenttest where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid'].". AND attemptid=".$_SESSION['attempt'].";");
                   
                     if($rslt=mysql_fetch_array($result))
                     {
@@ -159,7 +159,8 @@ session_start();
                     {
                         $_GLOBALS['message']="Try Again";
                     }
-                    closedb();
+                    
+                    $db->_destruct();
                 }
                 else
                 {
@@ -191,10 +192,10 @@ session_start();
          
           if(isset($_SESSION['stdname']))
           {
-                $result=executeQuery("select stdanswer,answered from studentquestion where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". AND attemptid=".$_SESSION['attempt'].";");
+                $result=$db->query("select stdanswer,answered from studentquestion where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". AND attemptid=".$_SESSION['attempt'].";");
                 $r1=mysql_fetch_array($result);
                 
-                $result=executeQuery("select * from question where testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].";");
+                $result=$db->query("select * from question where testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].";");
                 $r=mysql_fetch_array($result);
           ?>
           <div class="tc">
@@ -241,7 +242,7 @@ session_start();
 
           </div>
           <?php
-          closedb();
+            $db->_destruct();
           }
           ?>
       </div>

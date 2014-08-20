@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 ?>
 
@@ -34,7 +34,7 @@ include('../header.php');
               if (is_numeric($variable)) { 
                   $hasvar = true;
 
-                  if (!@executeQuery("delete from student where stdid=$variable")){
+                  if (!@$db->query("delete from student where stdid=$variable")){
 
                           $_GLOBALS['message'] = mysql_errno();
                   }
@@ -60,18 +60,18 @@ include('../header.php');
         else{
             $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'],ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password'],ENT_QUOTES) . "',emailid='" . htmlspecialchars($_REQUEST['email'],ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES) . "',address='" .htmlspecialchars($_REQUEST['address'],ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'],ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'],ENT_QUOTES) . "' where stdid='" . $_REQUEST['tc'] . "';";
           
-            if (!@executeQuery($query))
+            if (!@$db->query($query))
                 $_GLOBALS['message'] = mysql_error();
             else
                 $_GLOBALS['message'] = "Teacher Information is Successfully Updated.";
         }
-      closedb();
+     $db->_destruct();
    }
    
    
    else if (isset($_REQUEST['savea'])) {
        
-          //  $result = executeQuery("select max(tcid) as tc from testconductor");
+          //  $result = $db->query("select max(tcid) as tc from testconductor");
           //  $r = mysql_fetch_array($result);
             
         //    if (is_null($r['tc']))
@@ -79,7 +79,7 @@ include('../header.php');
         //    else
         //        $newstd=$r['tc'] + 1;
 
-           // $result = executeQuery("select tcname as tc from testconductor where tcname='" . htmlspecialchars($_REQUEST['cname'],ENT_QUOTES) . "';");
+           // $result = $db->query("select tcname as tc from testconductor where tcname='" . htmlspecialchars($_REQUEST['cname'],ENT_QUOTES) . "';");
 
 
          //   if(empty($_REQUEST['cname']) || empty($_REQUEST['password']) || empty($_REQUEST['email'])){
@@ -93,10 +93,10 @@ include('../header.php');
         //    else{
                 //$query = "insert into testconductor values($newstd,'" . htmlspecialchars($_REQUEST['cname'],ENT_QUOTES) . "',ENCODE('" . htmlspecialchars($_REQUEST['password'],ENT_QUOTES) . "','oespass'),'" . htmlspecialchars($_REQUEST['email'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['address'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['city'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['pin'],ENT_QUOTES) . "')";
                 
-                $query=executeQuery("update student set tc='" .$_REQUEST['tcbool']. "' where stdid='" . $_REQUEST['id'] . "';");
+                $query=$db->query("update student set tc='" .$_REQUEST['tcbool']. "' where stdid='" . $_REQUEST['id'] . "';");
                 
                 
-               // if (!@executeQuery($query)) {
+               // if (!@$db->query($query)) {
                //     if(mysql_errno ()==1062) //duplicate value
                //     $_GLOBALS['message'] = "Given Teacher Name voilates some constraints, please try with some other name.";
                //     else
@@ -105,7 +105,7 @@ include('../header.php');
               //  else
                     $_GLOBALS['message'] = "Successfully New Teacher is Created.";
            
-            closedb();
+            $db->_destruct();
          }
    ?>
 
@@ -170,7 +170,7 @@ include('../header.php');
                     
                  if(isset($_REQUEST['add'])) {
                     
-                    $result = executeQuery("select * FROM student ");
+                    $result = $db->query("select * FROM student ");
                     
                     if (mysql_num_rows($result)==0) {
                           header('Location: tcmng.php');
@@ -208,7 +208,7 @@ include('../header.php');
                                 <?php                  
                                 
                 
-                       closedb();
+                       $db->_destruct();
                       }
          
                   
@@ -217,7 +217,7 @@ include('../header.php');
                  if (isset($_REQUEST['category'])) {       
                      
                      $stdnamevar=$_POST['names'];
-                      $result = executeQuery("select * FROM student WHERE stdname='$stdnamevar' ");
+                      $result = $db->query("select * FROM student WHERE stdname='$stdnamevar' ");
                     
                        if($r=mysql_fetch_array($result)) {
                       
@@ -253,7 +253,7 @@ include('../header.php');
                  
                  else if (isset($_REQUEST['edit'])) {
                      
-                        $result = executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='" . htmlspecialchars($_REQUEST['edit'],ENT_QUOTES) . "';");
+                        $result = $db->query("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='" . htmlspecialchars($_REQUEST['edit'],ENT_QUOTES) . "';");
                        
                           if (mysql_num_rows($result) == 0) {
                                header('Location: tcmng.php');
@@ -305,7 +305,7 @@ include('../header.php');
 
                             </table>
                  <?php
-                            closedb();
+                            $db->_destruct();
                         }
                     } 
                     
@@ -313,7 +313,7 @@ include('../header.php');
                         
                         if(!isset($_REQUEST['add'])){
                         
-                        $result = executeQuery("select * from student WHERE tc=1 order by stdid ;");
+                        $result = $db->query("select * from student WHERE tc=1 order by stdid ;");
                       
                         if(mysql_num_rows($result) == 0){
                             echo "<h3 style=\"color:#0000cc;text-align:center;\">No Teachers Yet..!</h3>";
@@ -345,7 +345,7 @@ include('../header.php');
                                     </table>
                            <?php
                         }
-                     closedb();
+                     $db->_destruct();
                     }
                  
                  }

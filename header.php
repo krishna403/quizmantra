@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 
 <html>
+ <?php
+ 
+      include 'db/class.php';
+     // include_once("Class.Db.php");
+      
+      $db=new Db("localhost","root","mummy","quizmantra", true);
+ //include('db/class.php');
+ //include_once("db/Class.Db.php");
+ 
+ ?>
  <div id="header">
       <head>
           

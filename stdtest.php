@@ -3,7 +3,7 @@
 
 error_reporting(0);
   session_start();
-  include_once 'oesdb.php';
+  //include_once 'oesdb.php';
   include('header.php');
   
   
@@ -32,7 +32,7 @@ error_reporting(0);
       else if (isset($_REQUEST['starttest'])) {
     
         if (!empty($_REQUEST['tc'])) {
-            $result = executeQuery("select testcode as tcode from test where testid=" . $_SESSION['testid'] . ";");
+            $result = $db->query("select testcode as tcode from test where testid=" . $_SESSION['testid'] . ";");
 
             if($r = mysql_fetch_array($result)) {
                 
@@ -45,7 +45,7 @@ error_reporting(0);
                     
                     //$rem=0;
                     
-                $result=executeQuery("select * from question where testid=" . $_SESSION['testid'] . " order by qnid;");
+                $result= $db->query("select * from question where testid=" . $_SESSION['testid'] . " order by qnid;");
                 
                     if (mysql_num_rows($result) == 0) {
                         $_GLOBALS['message'] = "Tests questions cannot be selected.Please Try after some time!";
@@ -57,7 +57,7 @@ error_reporting(0);
                         $error = false;
                         
                         
-                        $results=executeQuery("select stdid,testid from studenttest");
+                        $results= $db->query("select stdid,testid from studenttest");
                            
                            while ($rs=mysql_fetch_array($results)){
                             
@@ -70,42 +70,57 @@ error_reporting(0);
                                 
                          if($bool){      
                                 
-                            $resulta = executeQuery("select attemptid from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . ";");
+                            $resulta = $db->query("select attemptid from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . ";");
                                 while ($ra=mysql_fetch_array($resulta)){
 
                                     //echo $_SESSION['testid'];
                                    // echo $_SESSION['stdid'];
-                                      $x=$ra['attemptid'];
+                                    
+                                     $concatids=$_SESSION['stdid'].$_SESSION['testid'];
+                                     $concatidsrev= strrev($concatids);
+                                      
+                                     $revattempt=strrev($ra['attemptid']);
+                                     $lengthattempt=strlen($ra['attemptid']);
+
+                                     $position= strpos($revattempt,$concatidsrev);
+                                     $finalpos=$lengthattempt-$position;
+
+                                     $att=(int)(substr($ra['attemptid'],$finalpos));  
+                                     $att++;
+                                     
+                                     $attempt=intval($concatids.$att);
+                                   //  $attempt=(int)$attempt;
+                                  //    $x=$ra['attemptid'];
                                      
                                     
-                                    if($x<10){
-                                       $rem=(int)$ra['attemptid']%10;
-                                        $rem++;
-                                        $val=(int)$ra['attemptid']/10;
-                                        $attempt=((int)$val*10+$rem);
+                                  //  if($x<10){
+                                  //     $rem=(int)$ra['attemptid']%10;
+                                  //      $rem++;
+                                  //      $val=(int)$ra['attemptid']/10;
+                                  //      $attempt=((int)$val*10+$rem);
                                       //  $attempt=(int)($val.$rem);
-                                    }
+                                 //   }
                                     
-                                    else if($x<100 && $x>9){
-                                        $rem=(int)$ra['attemptid']%100;
-                                        $rem++;
-                                        $val=(int)$ra['attemptid']/100;
-                                        $attempt=((int)$val*100+$rem);
-                                    }
+                                 //   else if($x<100 && $x>9){
+                                  //      $rem=(int)$ra['attemptid']%100;
+                                 //       $rem++;
+                                  //      $val=(int)$ra['attemptid']/100;
+                                  //      $attempt=((int)$val*100+$rem);
+                                //    }
                                     
-                                    else if($x<1000 && $x>99){
-                                        $rem=(int)$ra['attemptid']%1000;
-                                        $rem++;
-                                        $val=(int)$ra['attemptid']/1000;
-                                        $attempt=((int)$val*1000+$rem);
-                                    }
+                                 //   else if($x<1000 && $x>99){
+                                  //      $rem=(int)$ra['attemptid']%1000;
+                                 //       $rem++;
+                                  //      $val=(int)$ra['attemptid']/1000;
+                                  //      $attempt=((int)$val*1000+$rem);
+                                  //  }
                                     
-                                    else if($x<10000 && $x>999){
-                                        $rem=(int)$ra['attemptid']%10000;
-                                        $rem++;
-                                        $val=(int)$ra['attemptid']/10000;
-                                        $attempt=((int)$val*10000+$rem);
-                                    }
+                                 //   else if($x<10000 && $x>999){
+                                 //       $rem=(int)$ra['attemptid']%10000;
+                                 //       $rem++;
+                                 // //      $val=(int)$ra['attemptid']/10000;
+                                 //       $attempt=((int)$val*10000+$rem);
+                                 //   }
 
                                 } 
                                 
@@ -119,7 +134,7 @@ error_reporting(0);
                           
                      
                           
-                        if(!executeQuery("insert into studenttest values(". $_SESSION['stdid'] . "," . $_SESSION['testid'] . ",(select CURRENT_TIMESTAMP),date_add((select CURRENT_TIMESTAMP),INTERVAL (select duration from test where testid=" . $_SESSION['testid'] . ") MINUTE),0,'inprogress',".(int)$attempt.")"))
+                        if(!$db->query("insert into studenttest values(". $_SESSION['stdid'] . "," . $_SESSION['testid'] . ",(select CURRENT_TIMESTAMP),date_add((select CURRENT_TIMESTAMP),INTERVAL (select duration from test where testid=" . $_SESSION['testid'] . ") MINUTE),0,'inprogress',".(int)$attempt.")"))
                                $_GLOBALS['message'] = "error" . mysql_error();
 
                        
@@ -130,7 +145,7 @@ error_reporting(0);
                                   //  $query="insert into studentquestion values(" . $_SESSION['stdid'] . "," . $_SESSION['testid'] . "," . $r['qnid'] . ",'unanswered',NULL,".$_SESSION['attempt'].")";
                                  //   echo $query;
                                     
-                                  if (!executeQuery("insert into studentquestion values(" . $_SESSION['stdid'] . "," . $_SESSION['testid'] . "," . $r['qnid'] . ",'unanswered',NULL,".$_SESSION['attempt'].")")) {
+                                  if (!$db->query("insert into studentquestion values(" . $_SESSION['stdid'] . "," . $_SESSION['testid'] . "," . $r['qnid'] . ",'unanswered',NULL,".$_SESSION['attempt'].")")) {
                                      
                                      
                                       echo $_SESSION['stdid'] . " " . $_SESSION['testid'] . " " . $r['qnid']." ".$_SESSION['attempt'].',';
@@ -149,7 +164,7 @@ error_reporting(0);
                                   //  echo $query;
                                    
                                             
-                                    $result = executeQuery("select totalquestions,duration from test where testid=" . $_SESSION['testid'] . ";");
+                                    $result = $db->query("select totalquestions,duration from test where testid=" . $_SESSION['testid'] . ";");
                                     $r = mysql_fetch_array($result);
                                     
                                     $_SESSION['tqn'] = htmlspecialchars_decode($r['totalquestions'], ENT_QUOTES);
@@ -163,7 +178,7 @@ error_reporting(0);
                                  //  echo $var;
                                  //  exit;
                                    
-                                   $result = executeQuery("select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . " and attemptid=" . $_SESSION['attempt'] . ";");
+                                   $result = $db->query("select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . " and attemptid=" . $_SESSION['attempt'] . ";");
                                     $r = mysql_fetch_array($result);
                                     
                                     
@@ -217,12 +232,12 @@ error_reporting(0);
     
         else {
             $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password'], ENT_QUOTES) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "' where stdid='" . $_REQUEST['student'] . "';";
-            if (!@executeQuery($query))
+            if (!$db->query($query))
                 $_GLOBALS['message'] = mysql_error();
             else
                 $_GLOBALS['message'] = "Your Profile is Successfully Updated.";
          }
-      closedb();
+      $db->_destruct();
    }
   
   
@@ -301,7 +316,7 @@ error_reporting(0);
                             } 
                             
             else {
-                $result = executeQuery("select t.*,s.subname from test as t, subject as s where s.subid=t.subid AND CURRENT_TIMESTAMP<t.testto and t.totalquestions=(select count(*) from question where testid=t.testid) AND t.testid=" . $_SESSION['testid'] . ";");// and NOT EXISTS(select stdid,testid from studenttest where testid=t.testid and stdid=" . $_SESSION['stdid'] . ")
+                $result = $db->query("select t.*,s.subname from test as t, subject as s where s.subid=t.subid AND CURRENT_TIMESTAMP<t.testto and t.totalquestions=(select count(*) from question where testid=t.testid) AND t.testid=" . $_SESSION['testid'] . ";");// and NOT EXISTS(select stdid,testid from studenttest where testid=t.testid and stdid=" . $_SESSION['stdid'] . ")
                
                 if (mysql_num_rows($result) == 0) {
                     echo "Test ID : ".$_SESSION['testid'];
@@ -368,7 +383,7 @@ error_reporting(0);
                        <?php
                        
                                 }
-                                closedb();
+                                $db->_destruct();
                             }
                         }
                     ?>

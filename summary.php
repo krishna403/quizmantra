@@ -2,7 +2,7 @@
 <?php
 error_reporting(0);
 session_start();
-include_once 'oesdb.php';
+//include_once 'oesdb.php';
 include('header.php');
 ?>
 
@@ -53,7 +53,7 @@ include('header.php');
                 $elapsed=time()-strtotime($_SESSION['starttime']);
                 if(((int)$elapsed/60)<(int)$_SESSION['duration'])
                 {
-                    $result=executeQuery("select TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%H') as hour,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%i') as min,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%s') as sec from studenttest where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid'].". and attemptid=".$_SESSION['attempt'].";");
+                    $result= $db->query("select TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%H') as hour,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%i') as min,TIME_FORMAT(TIMEDIFF(endtime,CURRENT_TIMESTAMP),'%s') as sec from studenttest where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid'].". and attemptid=".$_SESSION['attempt'].";");
                     if($rslt=mysql_fetch_array($result))
                     {
                      echo "var hour=".$rslt['hour'].";";
@@ -64,7 +64,7 @@ include('header.php');
                     {
                         $_GLOBALS['message']="Try Again";
                     }
-                    closedb();
+                    $db->_destruct();
                 }
                 else
                 {
@@ -111,7 +111,7 @@ include('header.php');
           
           <?php
 
-                        $result=executeQuery("select * from studentquestion where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt']." order by qnid ;");
+                        $result= $db->query("select * from studentquestion where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt']." order by qnid ;");
                         if(mysql_num_rows($result)==0) {
                           echo"<h3 style=\"color:#0000cc;text-align:center;\">Please Try Again.</h3>";
                         }
@@ -152,7 +152,7 @@ include('header.php');
                     </table>
                             <?php
                             }
-                            closedb();
+                            $db->_destruct();
 
                     }
                     ?>

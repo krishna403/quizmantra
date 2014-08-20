@@ -2,7 +2,7 @@
 
 error_reporting(0);
 session_start();
-include_once 'oesdb.php';
+//include_once 'oesdb.php';
 include('header.php');
 
 ?>
@@ -28,7 +28,7 @@ include('header.php');
         unset($_SESSION['qn']);
         unset($_SESSION['duration']);
 
-        executeQuery("update studenttest set status='over' where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
+        $db->query("update studenttest set status='over' where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
     }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"

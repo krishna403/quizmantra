@@ -4,7 +4,7 @@
 error_reporting(0);
 session_start();
 
-  include_once 'oesdb.php';
+ // include_once 'oesdb.php';
   include('header.php');
   
    $idarr=array();
@@ -110,7 +110,7 @@ session_start();
              if(isset($_REQUEST['details'])) {
                  
                  
-                       $result=executeQuery("select s.stdname,t.testname,sub.subname,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as stime,TIMEDIFF(st.endtime,st.starttime) as dur,(select sum(marks) from question where testid=".$_REQUEST['details'].") as tm,IFNULL((select sum(q.marks) from studentquestion as sq, question as q where sq.testid=q.testid and sq.qnid=q.qnid and sq.answered='answered' and sq.stdanswer=q.correctanswer and sq.stdid=".$_SESSION['stdid']." and sq.testid=".$_REQUEST['details']." and sq.attemptid=".$_REQUEST['attempt']."),0) as om from student as s,test as t, subject as sub,studenttest as st where s.stdid=st.stdid and st.testid=t.testid and t.subid=sub.subid and st.stdid=".$_SESSION['stdid']." and st.testid=".$_REQUEST['details']." and st.attemptid=".$_REQUEST['attempt'].";") ;
+                       $result=$db->query("select s.stdname,t.testname,sub.subname,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as stime,TIMEDIFF(st.endtime,st.starttime) as dur,(select sum(marks) from question where testid=".$_REQUEST['details'].") as tm,IFNULL((select sum(q.marks) from studentquestion as sq, question as q where sq.testid=q.testid and sq.qnid=q.qnid and sq.answered='answered' and sq.stdanswer=q.correctanswer and sq.stdid=".$_SESSION['stdid']." and sq.testid=".$_REQUEST['details']." and sq.attemptid=".$_REQUEST['attempt']."),0) as om from student as s,test as t, subject as sub,studenttest as st where s.stdid=st.stdid and st.testid=t.testid and t.subid=sub.subid and st.stdid=".$_SESSION['stdid']." and st.testid=".$_REQUEST['details']." and st.attemptid=".$_REQUEST['attempt'].";") ;
                             if(mysql_num_rows($result)!=0) {
 
                                 $r=mysql_fetch_array($result);
@@ -150,7 +150,7 @@ session_start();
                             
                       <?php
 
-                       $result1=executeQuery("select q.qnid as questionid,q.question as quest,q.correctanswer as ca,sq.answered as status,sq.stdanswer as sa from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=q.testid and sq.testid=".$_REQUEST['details']." and sq.stdid=".$_SESSION['stdid']." and sq.attemptid=".$_REQUEST['attempt']." order by q.qnid;" );
+                       $result1=$db->query("select q.qnid as questionid,q.question as quest,q.correctanswer as ca,sq.answered as status,sq.stdanswer as sa from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=q.testid and sq.testid=".$_REQUEST['details']." and sq.stdid=".$_SESSION['stdid']." and sq.attemptid=".$_REQUEST['attempt']." order by q.qnid;" );
 
                           if(mysql_num_rows($result1)==0) {
                                   echo"<h3 style=\"color:#0000cc;text-align:center;\">1.Individual questions Cannot be displayed.</h3>";
@@ -176,7 +176,7 @@ session_start();
 
                                         if(is_null($r1['sa']))
                                         $r1['sa']="question"; 
-                                           $result2=executeQuery("SELECT ".$r1['ca']." as corans,IF('".$r1['status']."'='answered',(select ".$r1['sa']." FROM question WHERE qnid=".$r1['questionid']." AND testid=".$_REQUEST['details']."),'unanswered') AS stdans, IF('".$r1['status']."'='answered',IFNULL((SELECT q.marks FROM question as q, studentquestion AS sq WHERE q.qnid=sq.qnid AND q.testid=sq.testid AND q.correctanswer=sq.stdanswer AND sq.stdid=".$_SESSION['stdid']." AND q.qnid=".$r1['questionid']." AND q.testid=".$_REQUEST['details']." AND sq.attemptid=".$_REQUEST['attempt']."),0),0) AS stdmarks FROM question WHERE qnid=".$r1['questionid']." AND testid=".$_REQUEST['details'].";");
+                                           $result2=$db->query("SELECT ".$r1['ca']." as corans,IF('".$r1['status']."'='answered',(select ".$r1['sa']." FROM question WHERE qnid=".$r1['questionid']." AND testid=".$_REQUEST['details']."),'unanswered') AS stdans, IF('".$r1['status']."'='answered',IFNULL((SELECT q.marks FROM question as q, studentquestion AS sq WHERE q.qnid=sq.qnid AND q.testid=sq.testid AND q.correctanswer=sq.stdanswer AND sq.stdid=".$_SESSION['stdid']." AND q.qnid=".$r1['questionid']." AND q.testid=".$_REQUEST['details']." AND sq.attemptid=".$_REQUEST['attempt']."),0),0) AS stdmarks FROM question WHERE qnid=".$r1['questionid']." AND testid=".$_REQUEST['details'].";");
 
                                             if($r2=mysql_fetch_array($result2)) {
                                                 ?>
@@ -222,12 +222,15 @@ session_start();
                <table align="center"><tr>
                        <td colspan="2" align="center"><h4>Performance Graph</h4></td>
                      </tr>
-                      <tr>
-                     
-                      <td>
-                         
-                         
-                         
+                   
+                   
+                   
+                       <?php 
+                           if(($idarr)!=NULL && isset($marksarr)!=NULL){
+
+                          ?>
+                            <tr>
+                               <td>
                                  <html>
                                     <head>
                                       <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -278,16 +281,17 @@ session_start();
                                     <body>
                                       <div id="chart_div" style="width: 1500px; height: 500px;"></div>
                                     </body>
-                                  </html>
-                         
-                         
-                         
-                         
-                         
+                                </html>
                          
                          </td>
-                         
                      </tr>
+                   
+                          <?php }
+                            else{
+                                  echo '<tr style="color:red;"><td>Data Insufficient for Representing a graph</tr></td>';
+                             }
+                              
+                          ?>
                    </table> 
                         
                     <?php
@@ -303,7 +307,7 @@ session_start();
                         
                 else {
                         $k=0;
-                            $result=executeQuery("select st.*,t.testname,t.testdesc,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as startt from studenttest as st,test as t where t.testid=st.testid and st.stdid=".$_SESSION['stdid']." and st.status='over' order by st.testid;");
+                            $result=$db->query("select st.*,t.testname,t.testdesc,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as startt from studenttest as st,test as t where t.testid=st.testid and st.stdid=".$_SESSION['stdid']." and st.status='over' order by st.testid;");
                               if(mysql_num_rows($result)==0) {
                                 echo"<h3 style=\"color:#0000cc;text-align:center;\">I Think You Haven't Attempted Any Exams Yet..! Please Try Again After Your Attempt.</h3>";
                               }
@@ -329,10 +333,10 @@ session_start();
                                                         $om=0;
                                                         $tm=0;
                                                         
-                                                        $result1=executeQuery("select sum(q.marks) as om from studentquestion as sq, question as q where sq.testid=q.testid and sq.qnid=q.qnid and sq.answered='answered' and sq.stdanswer=q.correctanswer and sq.stdid=".$_SESSION['stdid']." and sq.testid=".$r['testid']." and sq.attemptid=".$r['attemptid']." order by sq.testid;");
+                                                        $result1=$db->query("select sum(q.marks) as om from studentquestion as sq, question as q where sq.testid=q.testid and sq.qnid=q.qnid and sq.answered='answered' and sq.stdanswer=q.correctanswer and sq.stdid=".$_SESSION['stdid']." and sq.testid=".$r['testid']." and sq.attemptid=".$r['attemptid']." order by sq.testid;");
                                                         $r1=mysql_fetch_array($result1);
 
-                                                        $result2=executeQuery("select sum(marks) as tm from question where testid=".$r['testid'].";");
+                                                        $result2=$db->query("select sum(marks) as tm from question where testid=".$r['testid'].";");
                                                         $r2=mysql_fetch_array($result2);
 
                                                         if($i%2==0) {
@@ -380,9 +384,9 @@ session_start();
                                                         echo"<td class=\"tddata\"><a title=\"Details\" href=\"viewresult.php?details=".$r['testid']."&attempt=".$r['attemptid']."\"><img src=\"images/details.gif\" height=\"40\" width=\"130\" alt=\"Details\" /></a></td>";
                                                        // $_SESSION['attid']=$r['attemptid'];
                                                         
-                                                        if($r['testid']<10 && $_SESSION['stdid']<10){
-                                                             $attemptno=$r['attemptid']%10;
-                                                         }
+                                                     //   if($r['testid']<10 && $_SESSION['stdid']<10){
+                                                      //       $attemptno=$r['attemptid']%10;
+                                                    //     }
                                                          
                                                          $concatids=$_SESSION['stdid'].$r['testid'];
                                                          $concatids=  strrev($concatids);
@@ -392,13 +396,12 @@ session_start();
                                                          $position= strpos($revattempt,$concatids);
                                                          $finalpos=$lengthattempt-$position;
                                                          
-                                                         $att=  substr($r['attemptid'],$finalpos);                                                         
+                                                         $att=substr($r['attemptid'],$finalpos);                                                         
                                                         // echo $position;
                                                          
                                                        
-                                                        echo "<td>".$attemptno.", ".$att."</td></tr>";
-                                                      //  $str
-                                                        $attemptarr[$k]=(int)$attemptno;
+                                                        echo "<td>".$att."</td></tr>";
+                                                        $attemptarr[$k]=(int)$att;
                                                                 
                                                      $k++;
                                                    }
@@ -415,10 +418,16 @@ session_start();
                           <table align="center"><tr>
                              <td colspan="2" align="center"><h4>Graphical Representation</h4></td>
                               </tr>
-                               <tr>
-
-                               <td>
-                          
+                              
+                              
+                              
+                              <?php 
+                                if(($testarr)!=NULL && isset($percsarr)!=NULL){
+                                  
+                                  ?>
+                              
+                                  <tr>
+                                    <td>
                                            <html>
                                                 <head>
                                                   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -455,25 +464,24 @@ session_start();
                                                 </body>
                                               </html>
                          
-                         
-                         
-                                   </td>
+                                    </td>
                          
                                 </tr>
+                              
+                              <?php }
+                              
+                                else{
+                                    echo '<tr style="color:red;"><td>Data Insufficient for Representing a graph</tr></td>';
+                                }
+                              
+                              ?>
+                              
                               </table> 
                           <?php  
                          }
-                       closedb();
+                      $db->_destruct();
                      }
                    ?>      
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
 
                 </div>
 

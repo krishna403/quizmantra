@@ -3,7 +3,7 @@
 
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 
 ?>
@@ -35,15 +35,15 @@ include('../header.php');
                 if (is_numeric($variable)){ 
                     $hasvar = true;
 
-                    if(!@executeQuery("delete from question where testid=" . $_SESSION['testqn'] . " and qnid=" . htmlspecialchars($variable)))
+                    if(!@$db->query("delete from question where testid=" . $_SESSION['testqn'] . " and qnid=" . htmlspecialchars($variable)))
                         $_GLOBALS['message'] = mysql_error();
                 }
             }
 
 
-        $result = executeQuery("select qnid from question where testid=" . $_SESSION['testqn'] . " order by qnid;");
+        $result = $db->query("select qnid from question where testid=" . $_SESSION['testqn'] . " order by qnid;");
             while($r = mysql_fetch_array($result))
-                    if (!@executeQuery("update question set qnid=" . ($count++) . " where testid=" . $_SESSION['testqn'] . " and qnid=" . $r['qnid'] . ";"))
+                    if (!@$db->query("update question set qnid=" . ($count++) . " where testid=" . $_SESSION['testqn'] . " and qnid=" . $r['qnid'] . ";"))
                         $_GLOBALS['message'] = mysql_error();
 
 
@@ -67,20 +67,20 @@ include('../header.php');
 
              else {
                $query = "update question set question='" . htmlspecialchars($_REQUEST['question'],ENT_QUOTES) . "',optiona='" . htmlspecialchars($_REQUEST['optiona'],ENT_QUOTES) . "',optionb='" . htmlspecialchars($_REQUEST['optionb'],ENT_QUOTES) . "',optionc='" . htmlspecialchars($_REQUEST['optionc'],ENT_QUOTES) . "',optiond='" . htmlspecialchars($_REQUEST['optiond'],ENT_QUOTES) . "',correctanswer='" . htmlspecialchars($_REQUEST['correctans'],ENT_QUOTES) . "',marks=" . htmlspecialchars($_REQUEST['marks'],ENT_QUOTES) . " where testid=" . $_SESSION['testqn'] . " and qnid=" . $_REQUEST['qnid'] . " ;";
-               if(!@executeQuery($query))
+               if(!@$db->query($query))
                    $_GLOBALS['message'] = mysql_error();
 
                else
                    $_GLOBALS['message'] = "Question is updated Successfully.";
            }
 
-           closedb();
+           $db->_destruct();
         }
   
   
     else if (isset($_REQUEST['savea'])) {
                 $cancel = false;
-                $result = executeQuery("select max(qnid) as qn from question where testid=" . $_SESSION['testqn'] . ";");
+                $result = $db->query("select max(qnid) as qn from question where testid=" . $_SESSION['testqn'] . ";");
                 $r = mysql_fetch_array($result);
                 
                     if (is_null($r['qn']))
@@ -89,10 +89,10 @@ include('../header.php');
                     else
                         $newstd=$r['qn'] + 1;
 
-                        $result = executeQuery("select count(*) as q from question where testid=" . $_SESSION['testqn'] . ";");
+                        $result = $db->query("select count(*) as q from question where testid=" . $_SESSION['testqn'] . ";");
                         $r2 = mysql_fetch_array($result);
 
-                        $result = executeQuery("select totalquestions from test where testid=" . $_SESSION['testqn'] . ";");
+                        $result = $db->query("select totalquestions from test where testid=" . $_SESSION['testqn'] . ";");
                         $r1 = mysql_fetch_array($result);
 
                     if(!is_null($r2['q']) && (int) htmlspecialchars_decode($r1['totalquestions'],ENT_QUOTES) == (int) $r2['q']) {
@@ -103,7 +103,7 @@ include('../header.php');
                     else
                         $cancel=false;
 
-                $result = executeQuery("select * from question where testid=" . $_SESSION['testqn'] . " and question='" . htmlspecialchars($_REQUEST['question'],ENT_QUOTES) . "';");
+                $result = $db->query("select * from question where testid=" . $_SESSION['testqn'] . " and question='" . htmlspecialchars($_REQUEST['question'],ENT_QUOTES) . "';");
                 
                 
                     if (!$cancel && $r1 = mysql_fetch_array($result)) {
@@ -124,12 +124,12 @@ include('../header.php');
 
                     else if (!$cancel){
                             $query = "insert into question values(" . $_SESSION['testqn'] . ",$newstd,'" . htmlspecialchars($_REQUEST['question'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['optiona'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['optionb'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['optionc'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['optiond'],ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['correctans'],ENT_QUOTES) . "'," . htmlspecialchars($_REQUEST['marks'],ENT_QUOTES) . ")";
-                                if (!@executeQuery($query))
+                                if (!@$db->query($query))
                                     $_GLOBALS['message'] = mysql_error();
                                 else
                                     $_GLOBALS['message'] = "Successfully New Question is Created.";
                         }
-             closedb();
+            $db->_destruct();
         }
     ?>
 
@@ -205,10 +205,10 @@ include('../header.php');
                         }
                      
                      
-                        $result = executeQuery("select count(*) as q from question where testid=" . $_SESSION['testqn'] . ";");
+                        $result = $db->query("select count(*) as q from question where testid=" . $_SESSION['testqn'] . ";");
                         $r1 = mysql_fetch_array($result);
 
-                        $result = executeQuery("select totalquestions from test where testid=" . $_SESSION['testqn'] . ";");
+                        $result = $db->query("select totalquestions from test where testid=" . $_SESSION['testqn'] . ";");
                         $r2 = mysql_fetch_array($result);
                         
                                     if ((int) $r1['q'] == (int) htmlspecialchars_decode($r2['totalquestions'],ENT_QUOTES))
@@ -268,7 +268,7 @@ include('../header.php');
                             }
                             
                             else if(isset($_REQUEST['edit'])) {
-                                $result = executeQuery("select * from question where testid=" . $_SESSION['testqn'] . " and qnid=" . $_REQUEST['edit'] . ";");
+                                $result = $db->query("select * from question where testid=" . $_SESSION['testqn'] . " and qnid=" . $_REQUEST['edit'] . ";");
                                
                                 if (mysql_num_rows($result) == 0) {
                                     header('Location: prepqn.php');
@@ -323,12 +323,12 @@ include('../header.php');
 
                                     </table>
                            <?php
-                                    closedb();
+                                    $db->_destruct();
                                 }
                             }
 
                       else {
-                                $result=executeQuery("select * from question where testid=" . $_SESSION['testqn'] . " order by qnid;");
+                                $result=$db->query("select * from question where testid=" . $_SESSION['testqn'] . " order by qnid;");
                                 if (mysql_num_rows($result)==0){
                                     echo "<h3 style=\"color:#0000cc;text-align:center;\">No Questions Yet..!</h3>";
                                 } 
@@ -361,7 +361,7 @@ include('../header.php');
                                     </table>
                       <?php
                                 }
-                                closedb();
+                                $db->_destruct();
                             }
                         }
                     ?>

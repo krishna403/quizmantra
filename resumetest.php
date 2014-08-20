@@ -5,7 +5,7 @@
 
 error_reporting(0);
 session_start();
-include_once 'oesdb.php';
+//include_once 'oesdb.php';
 include('header.php');
 ?>
 
@@ -27,7 +27,9 @@ include('header.php');
         }
         
         else if(isset($_REQUEST['resume'])){
-                if($r=mysql_fetch_array($result=executeQuery("select testname from test where testid=".$_REQUEST['resume'].";"))) {
+            
+            $result = query("select testname from test where testid=".$_REQUEST['resume'].";");
+                if($r=mysql_fetch_array($result)) {
                     $_SESSION['testname']=htmlspecialchars_decode($r['testname'],ENT_QUOTES);
                     $_SESSION['testid']=$_REQUEST['resume'];
                 }
@@ -36,7 +38,7 @@ include('header.php');
             else if(isset($_REQUEST['resumetest'])){
                 
                     if(!empty($_REQUEST['tc'])){
-                        $result=executeQuery("select testcode as tcode from test where testid=".$_SESSION['testid'].";");
+                        $result=$db->query("select testcode as tcode from test where testid=".$_SESSION['testid'].";");
 
                         if($r=mysql_fetch_array($result)) {
                             
@@ -46,13 +48,13 @@ include('header.php');
                             }
                             
                             else{
-                                $result=executeQuery("select totalquestions,duration from test where testid=".$_SESSION['testid'].";");
+                                $result=$db->query("select totalquestions,duration from test where testid=".$_SESSION['testid'].";");
                                 $r=mysql_fetch_array($result);
                                
                                 $_SESSION['tqn']=htmlspecialchars_decode($r['totalquestions'],ENT_QUOTES);
                                 $_SESSION['duration']=htmlspecialchars_decode($r['duration'],ENT_QUOTES);
                               
-                                $result=executeQuery("select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
+                                $result = $db->query("select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
                                 $r=mysql_fetch_array($result);
                               
                                 $_SESSION['starttime']=$r['startt'];
@@ -151,7 +153,7 @@ include('header.php');
        
                     else {
 
-                         $result=executeQuery("select t.testid,t.testname,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as startt,sub.subname as sname,TIMEDIFF(st.endtime,CURRENT_TIMESTAMP) as remainingtime from subject as sub,studenttest as st,test as t where sub.subid=t.subid and t.testid=st.testid and st.stdid=".$_SESSION['stdid']." and st.status='inprogress' order by st.starttime desc;");
+                         $result=$db->query("select t.testid,t.testname,DATE_FORMAT(st.starttime,'%d %M %Y %H:%i:%s') as startt,sub.subname as sname,TIMEDIFF(st.endtime,CURRENT_TIMESTAMP) as remainingtime from subject as sub,studenttest as st,test as t where sub.subid=t.subid and t.testid=st.testid and st.stdid=".$_SESSION['stdid']." and st.status='inprogress' order by st.starttime desc;");
                          if(mysql_num_rows($result)==0) {
                             echo"<h3 style=\"color:#0000cc;text-align:center;\">There are no incomplete exams, that needs to be resumed! Please Try Again..!</h3>";
                            }
@@ -195,7 +197,7 @@ include('header.php');
 
                       }
 
-                    closedb();
+                    $db->_destruct();
                 }
                 ?>
 

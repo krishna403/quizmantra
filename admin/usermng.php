@@ -2,7 +2,7 @@
 <?php
 error_reporting(0);
 session_start();
-include_once '../oesdb.php';
+//include_once '../oesdb.php';
 include('../header.php');
 
 ?>
@@ -38,7 +38,7 @@ include('../header.php');
          if (is_numeric($variable)){
              $hasvar = true;
 
-            if (!@executeQuery("delete from student where stdid=$variable")) {
+            if (!@$db->query("delete from student where stdid=$variable")) {
                 if (mysql_errno () == 1451) 
                     $_GLOBALS['message'] = "Too Prevent accidental deletions, system will not allow propagated deletions.<br/><b>Help:</b> If you still want to delete this user, then first manually delete all the records that are associated with this user.";
                 else
@@ -64,7 +64,7 @@ include('../header.php');
        else{
            
             $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password']) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "',tc='" . htmlspecialchars($_REQUEST['tcbool'], ENT_QUOTES) .  "' where stdid='" . htmlspecialchars($_REQUEST['student'], ENT_QUOTES) . "';";
-                if (!@executeQuery($query))
+                if (!@$db->query($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
                     $_GLOBALS['message'] = "User Information is Successfully Updated.";
@@ -74,7 +74,7 @@ include('../header.php');
     
     
      else if(isset($_REQUEST['savea'])){
-                $result = executeQuery("select max(stdid) as std from student");
+                $result = $db->query("select max(stdid) as std from student");
                 
                 $r=mysql_fetch_array($result);
 
@@ -83,7 +83,7 @@ include('../header.php');
                     else
                         $newstd=$r['std'] + 1;
 
-               $result=executeQuery("select stdname as std from student where stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "';");
+               $result=$db->query("select stdname as std from student where stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "';");
 
 
                     if(empty($_REQUEST['cname']) || empty($_REQUEST['password']) || empty($_REQUEST['email'])) {
@@ -96,14 +96,14 @@ include('../header.php');
 
                     else{
                         $query = "insert into student values($newstd,'" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['password'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "','" . '0' . "')";
-                            if (!@executeQuery($query)) {
+                            if (!@$db->query($query)) {
                            
                                     $_GLOBALS['message'] = mysql_error();
                             }
                             else
                                 $_GLOBALS['message'] = "Successfully New User is Created.";
                       }
-            closedb();
+            $db->_destruct();
     }
     ?>
 
@@ -226,7 +226,7 @@ include('../header.php');
                 
                 
                 else if (isset($_REQUEST['edit'])) {
-                    $result = executeQuery("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                    $result = $db->query("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                     if (mysql_num_rows($result) == 0) {
                         header('Location: usermng.php');
                     }
@@ -292,13 +292,13 @@ include('../header.php');
 
                     </table>
                <?php
-                    closedb();
+                    $db->_destruct();
                 }
             } 
             
             
             else {
-                $result = executeQuery("select * from student order by stdid;");
+                $result = $db->query("select * from student order by stdid;");
              
                 if (mysql_num_rows($result) == 0) {
                     echo "<h3 style=\"color:#0000cc;text-align:center;\">No Users Yet..!</h3>";
@@ -330,7 +330,7 @@ include('../header.php');
                     </table>
                <?php
                 }
-                closedb();
+               $db->_destruct();
             }
         }
                ?>
