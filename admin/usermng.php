@@ -38,7 +38,7 @@ include('../header.php');
          if (is_numeric($variable)){
              $hasvar = true;
 
-            if (!@$db->query("delete from student where stdid=$variable")) {
+            if (!$db->query("delete from student where stdid=$variable")) {
                 if (mysql_errno () == 1451) 
                     $_GLOBALS['message'] = "Too Prevent accidental deletions, system will not allow propagated deletions.<br/><b>Help:</b> If you still want to delete this user, then first manually delete all the records that are associated with this user.";
                 else
@@ -64,12 +64,12 @@ include('../header.php');
        else{
            
             $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password']) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "',tc='" . htmlspecialchars($_REQUEST['tcbool'], ENT_QUOTES) .  "' where stdid='" . htmlspecialchars($_REQUEST['student'], ENT_QUOTES) . "';";
-                if (!@$db->query($query))
+                if (!$db->query($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
                     $_GLOBALS['message'] = "User Information is Successfully Updated.";
          }
-      closedb();
+      $db->_destruct();
     }
     
     

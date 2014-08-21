@@ -2,18 +2,28 @@
  <?php
       error_reporting(0);
       session_start();
-    //  include_once 'oesdb.php';
+      
       include('header.php');
-   //   include 'db/class.php';
+      include('lib.php');
   ?>
-
-
-
        <fieldset class='loginwall'>
+                  
+    <?php
+    
+      if(isset($_REQUEST['register'])){
+          relocateHeader('register.php');
+      }
+      
+      else if($_REQUEST['stdsubmit']){
+          relocateHeader('');
+      }
+
+ ?>
            
            <div class="menubar" style="padding-left: 50%;">
                              <table id="menu"><tr>
-                                        <?php if(isset($_SESSION['stdname'])){
+                                        <?php
+                                        if(isset($_SESSION['stdname'])){
                                               header('Location: stdwelcome.php');
                                           }
 
@@ -35,65 +45,7 @@
            
        <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">LOGIN </b></font> </legend>
 
-           
-    <?php
-      if(isset($_REQUEST['register'])){
-          header('Location: register.php');
-      }
-      
-      
-      else if($_REQUEST['stdsubmit']){
-          
-          if(strcmp("root",(htmlspecialchars($_REQUEST['name'],ENT_QUOTES)))==0){   
-                   if(strcmp("root",(htmlspecialchars($_REQUEST['password'],ENT_QUOTES)))==0){  
-                       
-                   $_SESSION['admname']=htmlspecialchars($_REQUEST['name'],ENT_QUOTES);
-                   unset($_GLOBALS['message']);    
-                   header('Location: admin/admwelcome.php');
-               }
-          }
-          
-      else{ 
-          
-         $result=$db->query("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' "); 
-        // $result=executeQuery("select *,stdpassword as std from student where stdname='".htmlspecialchars($_REQUEST['name'],ENT_QUOTES)."' and stdpassword='".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."' ");
-           if(mysql_num_rows($result)>0){
-
-             // $r=mysql_fetch_array($result);
-               
-               $r=$db->fetch_array();
-             
-              
-             if(strcmp(htmlspecialchars($r['std'],ENT_QUOTES),(htmlspecialchars($_REQUEST['password'],ENT_QUOTES)))==0){
-
-                    $_SESSION['stdname']=htmlspecialchars($r['stdname'],ENT_QUOTES);
-                    $_SESSION['stdid']=$r['stdid'];
-                  
-                        if($r['tc']==1){
-
-                          $_SESSION['tcname']=htmlspecialchars($r['stdname'],ENT_QUOTES);
-                          $_SESSION['tcid']=$r['stdid'];
-                        }
-                  
-                  unset($_GLOBALS['message']);
-                  header('Location: stdwelcome.php');
-              }
-              
-              else{
-                  $_GLOBALS['message']="Check Your user name and Password.";
-             }
-          }
-          
-          else {
-              $_GLOBALS['message']="Check Your user name and Password.";
-            }
-            
-         // closedb();
-            $db->_destruct();
-      }
-      }
-
- ?>
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
  <html>
         <head>
@@ -106,7 +58,8 @@
                 <?php
 
                   if($_GLOBALS['message']){
-                   echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+                      echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+                     // printmessage();
                   }
                 ?>
 

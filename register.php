@@ -98,7 +98,7 @@
       <div class="page">
             
       <?php
-          if($_GLOBALS['message']) {
+          if($_GLOBALS['message']){
             echo "<div class=\"message\">".$_GLOBALS['message']."</div>";
           }
         ?>

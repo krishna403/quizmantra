@@ -133,6 +133,7 @@ class Db
     {
         return mysql_fetch_array($this->query);
     }
+   
 
     /**
      * Gets a field name with the mysql_field_name function

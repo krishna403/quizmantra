@@ -87,10 +87,6 @@ session_start();
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="editprofile.php"><input type="button" value="EDIT PROFILE" style="color: #31AE79;height: 70px;width: 250px;font-size: 23px;"></a></td>
-                                                </tr>
-                                                
-                                                <tr>
                                                     <td style="padding-top: 20px" id='c1'><a href="testmng.php?forpq=true"><input type="button" value="ADD QUESTIONS" style="color: #36AE70;height: 70px;width: 250px;font-size: 21px;"></a></td>
                                                 </tr>
                                                 

@@ -95,10 +95,6 @@ session_start();
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="practicetest.php"><input type="button" value="PRACTICE TEST" style="color: #36AE70;height: 70px;width: 250px;font-size: 21px;"></a></td>
-                                                </tr>
-                                                
-                                                <tr>
                                                     <td style="padding-top: 20px" id='c1'><a href="resumetest.php"><input type="button" value="RESUME TEST" style="color: #36AF79;height: 70px;width: 250px;font-size: 23px;"></a></td>
                                                 </tr>
                                                <?php  if(isset($_SESSION['tcname']) && isset($_SESSION['tcid']) ){?> 

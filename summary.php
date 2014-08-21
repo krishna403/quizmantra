@@ -165,6 +165,7 @@ include('header.php');
   </body>
  </fieldset>
 </fieldset>
-<?php
+
+    <?php
   include('loginfooter.html');
 

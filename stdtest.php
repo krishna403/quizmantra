@@ -259,7 +259,7 @@ error_reporting(0);
               <form id="stdtest" action="stdtest.php" method="post">
                 
                   
-                        <table id="menu"><tr style="float:right;">
+                  <table id="menu" style="margin-left: 50%;"><tr style="float:right;">
                             
                         <?php
                            if (isset($_SESSION['stdname'])) {
@@ -286,7 +286,7 @@ error_reporting(0);
                         
                     <?php
                             if(isset($_REQUEST['testcode'])){
-                                echo "<br><div class=\"pmsg\" style=\"text-align:center;\">What is the Code of " . $_SESSION['testname'] . " ? </div>";
+                                echo "<br><div class=\"pmsg\" style=\"text-align:center;color:#36AE79;\"><b>What is the Code of " . $_SESSION['testname'] . " ? </b></div>";
                             }
                             
                             else{
@@ -301,12 +301,14 @@ error_reporting(0);
                                 <table cellpadding="30" cellspacing="10">
                                     <tr>
                                         <td>Enter Test Code</td>
-                                        <td><input type="text" tabindex="1" name="tc" value="" size="16" /></td>
-                                        <td><div class="help"><b>Note:</b><br/>Once you press start test<br/>button timer will be started</div></td>
+                                        <td><input type="text" tabindex="1" name="tc" value="" size="25" /></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3">
-                                            <input type="submit" tabindex="3" value="Start Test" name="starttest" class="subbtn" />
+                                        <td><div class="help"><b>Note : </b></td><td><p style="color:#af0a36;">Once you press start test <br/> button timer will be started</p></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" align="right">
+                                            <input type="submit" tabindex="3" value="Start Test" name="starttest" class="subbtn" style="color: #36AE79;height: 40px;width: 180px" />
                                         </td>
                                     </tr>
                                 </table>
