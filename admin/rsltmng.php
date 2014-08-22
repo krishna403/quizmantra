@@ -1,7 +1,6 @@
 <?php
 error_reporting(0);
 session_start();
-//include_once '../oesdb.php';
 include('../header.php');
 ?>
 
@@ -15,11 +14,11 @@ include('../header.php');
    
    else if(isset($_REQUEST['logout'])) {
         unset($_SESSION['admname']);
-        header('Location: index.php');
+        header('Location: ../index.php');
     }
     
     else if(isset($_REQUEST['dashboard'])){
-            header('Location: admwelcome.php');
+            header('Location: ../stdwelcome.php');
 
         }
         

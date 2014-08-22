@@ -16,9 +16,14 @@ include('../header.php');
   if (!isset($_SESSION['admname']) || !isset($_SESSION['testqn'])) {
     $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
    } 
+  
    
   else if(isset($_REQUEST['logout'])) {
-    unset($_SESSION['admname']);
+      
+       if(isset($_SESSION['admname'])){
+          unset($_SESSION['admname']);
+       }
+    
     header('Location: ../index.php');
   }
   
@@ -157,30 +162,11 @@ include('../header.php');
                       if (isset($_SESSION['admname']) && isset($_SESSION['testqn'])) {
 
                     ?>
-                        <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
-                                                                                             echo $_SESSION['admname'];
-                                                                                    
-                                              ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
-                                      
+                       
                         <td><input type="submit" value="Manage Tests" name="managetests" class="subbtn" title="Manage Tests" style="color: #36AE79;height: 40px;width: 180px"/></td>
 
                     <?php
-                      if (isset($_REQUEST['add'])) {
-                    ?>
-                            <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                            <td><input type="submit" value="Save" name="savea" class="subbtn" onclick="validateqnform('prepqn')" title="Save the Changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
-
-                    <?php
-                            }
-                            else if (isset($_REQUEST['edit'])) { 
-                    ?>
-                            <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px"/></td>
-                            <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validateqnform('prepqn')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
-
-                     <?php
-                      }
-                    
-                    else {  
+                       if(!(isset($_REQUEST['add'])) && !(isset($_REQUEST['add'])) ){  
                      ?>
                             
                         <td><input type="submit" value="Delete" name="delete" class="subbtn" title="Delete" style="color: #36AE79;height: 40px;width: 180px" /></td>
@@ -188,6 +174,15 @@ include('../header.php');
                         
                      <?php
                      }
+                     ?>
+                     
+                      <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
+                                                                                               if(isset($_SESSION['admname'])){
+                                                                                                                 echo $_SESSION['admname'];
+                                                                                                            }
+                                                                                    
+                                              ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
+                   <?php                   
                   }
                 ?>
                     </tr></table>
@@ -261,6 +256,11 @@ include('../header.php');
                                         <td><input type="text" name="marks" value="1" size="30" onkeyup="isnum(this)" /></td>
 
                                     </tr>
+                                    
+                                    <tr>
+                                          <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                          <td><input type="submit" value="Save" name="savea" class="subbtn" onclick="validateqnform('prepqn')" title="Save the Changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                    </tr>   
 
                                 </table>
 
@@ -318,6 +318,12 @@ include('../header.php');
                                         <tr>
                                             <td>Marks</td>
                                             <td><input type="text" name="marks" value="<?php echo htmlspecialchars_decode($r['marks'],ENT_QUOTES); ?>" size="30" onkeyup="isnum(this)" /></td>
+
+                                        </tr>
+                                        
+                                        <tr>
+                                             <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px"/></td>
+                                              <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validateqnform('prepqn')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
 
                                         </tr>
 

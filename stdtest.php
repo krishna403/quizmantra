@@ -1,264 +1,23 @@
 
 <?php
 
-error_reporting(0);
-  session_start();
-  //include_once 'oesdb.php';
-  include('header.php');
-  
+ error_reporting(0);
+ session_start();
+ 
+ 
+include('lib.php');
+include('header.php');
   
   ?>
-<fieldset class="loginwall">
+   <fieldset class="loginwall">
 
-
-<?php
-    if (!isset($_SESSION['stdname'])) {
-        $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
-    }
-    
-    else if (isset($_SESSION['starttime'])) {
-        header('Location: testconducter.php');
-    }
-
-    else if (isset($_REQUEST['logout'])) {
-       unset($_SESSION['stdname']);
-       header('Location: index.php');
-   }
-
-    else if (isset($_REQUEST['dashboard'])) {
-        header('Location: stdwelcome.php');
-    }
-
-      else if (isset($_REQUEST['starttest'])) {
-    
-        if (!empty($_REQUEST['tc'])) {
-            $result = $db->query("select testcode as tcode from test where testid=" . $_SESSION['testid'] . ";");
-
-            if($r = mysql_fetch_array($result)) {
-                
-                if(strcmp(htmlspecialchars_decode($r['tcode'], ENT_QUOTES), htmlspecialchars($_REQUEST['tc'], ENT_QUOTES)) != 0) {
-                    $display = true;
-                    $_GLOBALS['message'] = "You have entered an Invalid Test Code.Try again.";
-                 }
-            
-                else{
-                    
-                    //$rem=0;
-                    
-                $result= $db->query("select * from question where testid=" . $_SESSION['testid'] . " order by qnid;");
-                
-                    if (mysql_num_rows($result) == 0) {
-                        $_GLOBALS['message'] = "Tests questions cannot be selected.Please Try after some time!";
-                    }
-                
-                    else {
-                        
-                        
-                        $error = false;
-                        
-                        
-                        $results= $db->query("select stdid,testid from studenttest");
-                           
-                           while ($rs=mysql_fetch_array($results)){
-                            
-                               if($rs['stdid']==$_SESSION['stdid'] && $rs['testid']==$_SESSION['testid']){
-                                   $bool=true;
-                                   break;
-                               }
-                             }    
-                                
-                                
-                         if($bool){      
-                                
-                            $resulta = $db->query("select attemptid from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . ";");
-                                while ($ra=mysql_fetch_array($resulta)){
-
-                                    //echo $_SESSION['testid'];
-                                   // echo $_SESSION['stdid'];
-                                    
-                                     $concatids=$_SESSION['stdid'].$_SESSION['testid'];
-                                     $concatidsrev= strrev($concatids);
-                                      
-                                     $revattempt=strrev($ra['attemptid']);
-                                     $lengthattempt=strlen($ra['attemptid']);
-
-                                     $position= strpos($revattempt,$concatidsrev);
-                                     $finalpos=$lengthattempt-$position;
-
-                                     $att=(int)(substr($ra['attemptid'],$finalpos));  
-                                     $att++;
-                                     
-                                     $attempt=intval($concatids.$att);
-                                   //  $attempt=(int)$attempt;
-                                  //    $x=$ra['attemptid'];
-                                     
-                                    
-                                  //  if($x<10){
-                                  //     $rem=(int)$ra['attemptid']%10;
-                                  //      $rem++;
-                                  //      $val=(int)$ra['attemptid']/10;
-                                  //      $attempt=((int)$val*10+$rem);
-                                      //  $attempt=(int)($val.$rem);
-                                 //   }
-                                    
-                                 //   else if($x<100 && $x>9){
-                                  //      $rem=(int)$ra['attemptid']%100;
-                                 //       $rem++;
-                                  //      $val=(int)$ra['attemptid']/100;
-                                  //      $attempt=((int)$val*100+$rem);
-                                //    }
-                                    
-                                 //   else if($x<1000 && $x>99){
-                                  //      $rem=(int)$ra['attemptid']%1000;
-                                 //       $rem++;
-                                  //      $val=(int)$ra['attemptid']/1000;
-                                  //      $attempt=((int)$val*1000+$rem);
-                                  //  }
-                                    
-                                 //   else if($x<10000 && $x>999){
-                                 //       $rem=(int)$ra['attemptid']%10000;
-                                 //       $rem++;
-                                 // //      $val=(int)$ra['attemptid']/10000;
-                                 //       $attempt=((int)$val*10000+$rem);
-                                 //   }
-
-                                } 
-                                
-                          }
-                          
-                          else{
-                               $attempt=$_SESSION['stdid'].$_SESSION['testid'].'1';
-                          }
-                             
-                          $_SESSION['attempt']=$attempt;
-                          
-                     
-                          
-                        if(!$db->query("insert into studenttest values(". $_SESSION['stdid'] . "," . $_SESSION['testid'] . ",(select CURRENT_TIMESTAMP),date_add((select CURRENT_TIMESTAMP),INTERVAL (select duration from test where testid=" . $_SESSION['testid'] . ") MINUTE),0,'inprogress',".(int)$attempt.")"))
-                               $_GLOBALS['message'] = "error" . mysql_error();
-
-                       
-                        
-                        else{
-                                while($r = mysql_fetch_array($result)){
-                                    
-                                  //  $query="insert into studentquestion values(" . $_SESSION['stdid'] . "," . $_SESSION['testid'] . "," . $r['qnid'] . ",'unanswered',NULL,".$_SESSION['attempt'].")";
-                                 //   echo $query;
-                                    
-                                  if (!$db->query("insert into studentquestion values(" . $_SESSION['stdid'] . "," . $_SESSION['testid'] . "," . $r['qnid'] . ",'unanswered',NULL,".$_SESSION['attempt'].")")) {
-                                     
-                                     
-                                      echo $_SESSION['stdid'] . " " . $_SESSION['testid'] . " " . $r['qnid']." ".$_SESSION['attempt'].',';
-                                      $_GLOBALS['message'] = "Failure while preparing questions for you.Try again";
-                                      $error = true;
-                                    }
-                                }
-                                
-                                if ($error==true){
-                             
-                                } 
-
-                                else {
-                                    
-                                   // $query="select totalquestions,duration from test where testid=" . $_SESSION['testid'] . ";";
-                                  //  echo $query;
-                                   
-                                            
-                                    $result = $db->query("select totalquestions,duration from test where testid=" . $_SESSION['testid'] . ";");
-                                    $r = mysql_fetch_array($result);
-                                    
-                                    $_SESSION['tqn'] = htmlspecialchars_decode($r['totalquestions'], ENT_QUOTES);
-                                    $_SESSION['duration'] = htmlspecialchars_decode($r['duration'], ENT_QUOTES);
-                                    
-                                      
-                                   // $query2="select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . "and attemptid=" . $_SESSION['attempt'] . ";";
-                                  //  echo $query2;
-                                    
-                                 //  $var= "select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . " and attemptid=" . $_SESSION['attempt'] . ";";
-                                 //  echo $var;
-                                 //  exit;
-                                   
-                                   $result = $db->query("select DATE_FORMAT(starttime,'%Y-%m-%d %H:%i:%s') as startt,DATE_FORMAT(endtime,'%Y-%m-%d %H:%i:%s') as endt from studenttest where testid=" . $_SESSION['testid'] . " and stdid=" . $_SESSION['stdid'] . " and attemptid=" . $_SESSION['attempt'] . ";");
-                                    $r = mysql_fetch_array($result);
-                                    
-                                    
-                                    $_SESSION['starttime'] = $r['startt'];
-                                    $_SESSION['endtime'] = $r['endt'];
-                                    $_SESSION['qn'] = 1;
-                                    
-                                  //  echo $_SESSION['starttime'];
-                                  //  echo $_SESSION['endtime'];
-                                  //  exit;
-                                 //   header('Location: home.php');
-                                    header('Location: testconducter.php');
-                                }
-                        }
-                        
-                        
-                }
-            }
-        }
-        
-        
-        else {
-            $display = true;
-            $_GLOBALS['message'] = "You have entered an Invalid Test Code.Try again.";
-        }
-        
-    } 
-    
-    
-    else {
-            $display = true;
-            $_GLOBALS['message'] = "Enter the Test Code First!";
-        }
-
-  }
-
-
-   else if (isset($_REQUEST['testcode'])) {
-   
-      //  if ($r = mysql_fetch_array($result = executeQuery("select testid from test where testname='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "';"))) {
-            $_SESSION['testname'] = $_REQUEST['testcode'];
-          //  $_SESSION['testid'] = $r['testid'];
-        }
-  // }
-
-    else if (isset($_REQUEST['savem'])) {
-   
-        if (empty($_REQUEST['cname']) || empty($_REQUEST['password']) || empty($_REQUEST['email'])) {
-            $_GLOBALS['message'] = "Some of the required Fields are Empty.Therefore Nothing is Updated";
-        }
-    
-        else {
-            $query = "update student set stdname='" . htmlspecialchars($_REQUEST['cname'], ENT_QUOTES) . "', stdpassword='" . htmlspecialchars($_REQUEST['password'], ENT_QUOTES) . "',emailid='" . htmlspecialchars($_REQUEST['email'], ENT_QUOTES) . "',contactno='" . htmlspecialchars($_REQUEST['contactno'], ENT_QUOTES) . "',address='" . htmlspecialchars($_REQUEST['address'], ENT_QUOTES) . "',city='" . htmlspecialchars($_REQUEST['city'], ENT_QUOTES) . "',pincode='" . htmlspecialchars($_REQUEST['pin'], ENT_QUOTES) . "' where stdid='" . $_REQUEST['student'] . "';";
-            if (!$db->query($query))
-                $_GLOBALS['message'] = mysql_error();
-            else
-                $_GLOBALS['message'] = "Your Profile is Successfully Updated.";
-         }
-      $db->_destruct();
-   }
-  
-  
-  
- ?>
-   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-   <html>
-     <head>
-        <title>Welcome</title>
-        
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
-        <script type="text/javascript" src="validate.js" ></script>
-      </head>
-       
+  <?php
+     studenttest();   //calling studenttest function from lib.php 
+  ?>
        
       <body>
          <div id="container">
-       
               <form id="stdtest" action="stdtest.php" method="post">
-                
-                  
                   <table id="menu" style="margin-left: 50%;"><tr style="float:right;">
                             
                         <?php
@@ -269,22 +28,20 @@ error_reporting(0);
                             <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
                                                                                              echo $_SESSION['stdname'];
                                  ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px"/></b></td>
-                              
-
-                        </tr></table>
+                            
+                    </tr>
+                  </table>
+                  
                 
-           <fieldset><legend><font color='black'  size="4"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">TEST SESSION </b></font></legend>
+           <fieldset><legend><font color='black'  size="4"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">STUDENT TEST </b></font></legend>
                     
                     <div class="page">
                         
                     <?php
                             if ($_GLOBALS['message']) {
-                                echo "<div class=\"message\">" . $_GLOBALS['message'] . "</div>";
+                                printmessage($_GLOBALS['message']);
                             }
-                    ?>
-                        
-                        
-                    <?php
+                    
                             if(isset($_REQUEST['testcode'])){
                                 echo "<br><div class=\"pmsg\" style=\"text-align:center;color:#36AE79;\"><b>What is the Code of " . $_SESSION['testname'] . " ? </b></div>";
                             }
@@ -292,10 +49,7 @@ error_reporting(0);
                             else{
                                 echo "<br><div class=\"pmsg\" style=\"text-align:left;\"></div>";
                             }
-                    ?>
-                        
-                        
-                    <?php
+                    
                             if (isset($_REQUEST['testcode']) || $display == true) {
                       ?>
                                 <table cellpadding="30" cellspacing="10">
@@ -312,24 +66,20 @@ error_reporting(0);
                                         </td>
                                     </tr>
                                 </table>
-
-
                     <?php
                             } 
                             
             else {
-                $result = $db->query("select t.*,s.subname from test as t, subject as s where s.subid=t.subid AND CURRENT_TIMESTAMP<t.testto and t.totalquestions=(select count(*) from question where testid=t.testid) AND t.testid=" . $_SESSION['testid'] . ";");// and NOT EXISTS(select stdid,testid from studenttest where testid=t.testid and stdid=" . $_SESSION['stdid'] . ")
+                   $result = $db->query("select t.*,s.subname from test as t, subject as s where s.subid=t.subid AND CURRENT_TIMESTAMP<t.testto and t.totalquestions=(select count(*) from question where testid=t.testid) AND t.testid=" . $_SESSION['testid'] . ";");// and NOT EXISTS(select stdid,testid from studenttest where testid=t.testid and stdid=" . $_SESSION['stdid'] . ")
                
-                if (mysql_num_rows($result) == 0) {
-                    echo "Test ID : ".$_SESSION['testid'];
-                    echo"<h3 style=\"color:#0000cc;text-align:center;\">Sorry...! For this moment, You have not Offered to take any tests.</h3>";
-                }
+                 if (mysql_num_rows($result) == 0) {
+                       echo "Test ID : ".$_SESSION['testid'];
+                      echo"<h3 style=\"color:#0000cc;text-align:center;\">Sorry...! For this moment, You have not Offered to take any tests.</h3>";
+                   }
 
                 else {
 
              ?>
-                        
-                        
                         <div id="linkdiv">
                 
                   <table><tr>
@@ -338,10 +88,6 @@ error_reporting(0);
                            <td style="padding-left:35%;width:70%;" rowspan="2">
                               <div style="width:70%;height:80%;border:5px solid #000;padding-left:5%;border-color: #36AE79">                    
                            
-                                
-                                           
-                                              
-                                                
                                   <table cellpadding="8" class="datatable">
                                                       
                                      <tr><td><label style="font-size: 25px;">Overview : <hr></td></tr>
@@ -369,9 +115,6 @@ error_reporting(0);
                                </tr>
                                            
                                  </table>
-                                            
-                                            
-                                        
                             </div>       
                           </td>  
                        </tr>
@@ -380,12 +123,10 @@ error_reporting(0);
                       </tr>
                  </table>  
            </div>
-                        
                                  
                        <?php
-                       
                                 }
-                                $db->_destruct();
+                               $db->_destruct();
                             }
                         }
                     ?>

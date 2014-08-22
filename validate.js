@@ -11,7 +11,7 @@
                 }
                 function isalpha(ele)
                 {
-                    var r=/[^a-zA-Z]+/i;
+                    var r=/[^a-zA-Z ]+/i;
                     if(r.test(ele.value))
                      {
                          alert("This Field allows Only Alphabets.");

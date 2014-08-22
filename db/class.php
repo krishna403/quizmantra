@@ -191,8 +191,6 @@ class Db
      */
     public function _destruct()
     {
-      //  if(is_resource($this->query)) mysql_free_result($this->query);
-      //  if(mysql_ping($this->link)) mysql_close($this->link);
          if(!$this->db)
           mysql_close($this->db);
      }

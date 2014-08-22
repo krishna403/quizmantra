@@ -3,67 +3,24 @@
 
     error_reporting(0);
     session_start();
-  //  include_once 'oesdb.php';
+    
+    include('lib.php');
     include('header.php');
-    ?>
+    
+  ?>
+
 <fieldset class='loginwall'>
 
-<?php
-
-        if(isset($_REQUEST['stdsubmit']))
-        {
-
-                $result=$db->query("select max(stdid) as std from student");
-                $r=mysql_fetch_array($result);
-                if(is_null($r['std']))
-                $newstd=1;
-                else
-                $newstd=$r['std']+1;
-
-                $result=$db->query("select stdname as std from student where stdname='".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."';");
-
-               if(empty($_REQUEST['cname'])||empty ($_REQUEST['password'])||empty ($_REQUEST['email']))
-               {
-                    $_GLOBALS['message']="Some of the required Fields are Empty";
-               }else if(mysql_num_rows($result)>0)
-               {
-                   $_GLOBALS['message']="Sorry the User Name is Not Available Try with Some Other name.";
-               }
-               else
-               {
-                $query="insert into student values($newstd,'".htmlspecialchars($_REQUEST['cname'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['password'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['email'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['address'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['city'],ENT_QUOTES)."','".htmlspecialchars($_REQUEST['pin'],ENT_QUOTES)."','0')";
-                if(!$db->query($query))
-                           $_GLOBALS['message']=mysql_error();
-                else
-                {
-                   $success=true;
-                   $_GLOBALS['message']="Successfully Your Account is Created.Click <a href=\"index.php\">Here</a> to LogIn";
-                  // header('Location: index.php');
-                }
-               }
-              $db->_destruct();
+   <?php
+   
+        if(isset($_REQUEST['stdsubmit'])){
+            registration();
         }
-    
    ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-  <html>
-
-    <head>
-      <title>Registration</title>
-      <link rel="stylesheet" type="text/css" href="sc.css"/>
-      <script type="text/javascript" src="validate.js" ></script>
-   </head>
-    
     
    <body id="register">
-     
-      
-       
         <div id="container">
-            
-            
             <div class="menubar" style="padding-left: 50%;">
                              <table id="menu"><tr>
                                         <?php if(isset($_SESSION['stdname'])){
@@ -86,7 +43,6 @@
             <fieldset><legend>
            
               <?php if(!$success): ?>
-                 <!--  <h2 style="text-align:center;color:#ffffff;">New User Registration</h2>-->
                   <font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">REGISTRATION </b></font> 
               <?php endif; ?>
         
@@ -99,10 +55,9 @@
             
       <?php
           if($_GLOBALS['message']){
-            echo "<div class=\"message\">".$_GLOBALS['message']."</div>";
+              printmessage($_GLOBALS['message']);
           }
         ?>
-       
             
        <?php
              if($success){
@@ -112,7 +67,7 @@
              else{
           
          ?>
-                    <form id="admloginform"  action="register.php" method="post" onsubmit="return validateform('admloginform');">
+                  <form id="admloginform"  action="register.php" method="post" onsubmit="return validateform('admloginform');">
                       <table cellpadding="10" cellspacing="10" style="text-align:left;margin-left:5em" >
                         <tr>  
                           <td rowspan="10" style="padding-right:700px; padding-left: 40px;">
@@ -122,7 +77,7 @@
                             </tr>
                         <tr>
                             <td>User Name</td>
-                            <td><input type="text" name="cname" value="" size="16" onkeyup="isalphanum(this)"/></td>
+                            <td><input type="text" name="cname" value="<?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['cname'],ENT_QUOTES);}?>" size="16" onkeyup="isalphanum(this)"/></td>
 
                         </tr>
 
@@ -138,24 +93,24 @@
                         </tr>
                         <tr>
                             <td>E-mail ID</td>
-                            <td><input type="text" name="email" value="" size="16" /></td>
+                            <td><input type="text" name="email" value="<?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['email'],ENT_QUOTES);}?>" size="16" /></td>
                         </tr>
                                  <tr>
                             <td>Contact No</td>
-                            <td><input type="text" name="contactno" value="" size="16" onkeyup="isnum(this)"/></td>
+                            <td><input type="text" name="contactno" value="<?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['contactno'],ENT_QUOTES);}?>" size="16" onkeyup="isnum(this)"/></td>
                         </tr>
 
                             <tr>
                             <td>Address</td>
-                            <td><textarea name="address" cols="20" rows="3"></textarea></td>
+                            <td><textarea name="address" cols="20" rows="3"><?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['address'],ENT_QUOTES);}?></textarea></td>
                         </tr>
                                  <tr>
                             <td>City</td>
-                            <td><input type="text" name="city" value="" size="16" onkeyup="isalpha(this)"/></td>
+                            <td><input type="text" name="city" value="<?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['city'],ENT_QUOTES);}?>" size="16" onkeyup="isalpha(this)"/></td>
                         </tr>
                                  <tr>
                             <td>PIN Code</td>
-                            <td><input type="text" name="pin" value="" size="16" onkeyup="isnum(this)" /></td>
+                            <td><input type="text" name="pin" value="<?PHP if(isset($_REQUEST['stdsubmit'])){htmlspecialchars($_REQUEST['pin'],ENT_QUOTES);}?>" size="16" onkeyup="isnum(this)" /></td>
                         </tr>
                                  <tr>
                                      <td style="text-align:right;"><input type="submit" name="stdsubmit" value="Register" class="subbtn" style="color: #36AE79;height: 30px;width: 120px;font-size: 20px" /></td>
@@ -164,14 +119,16 @@
                       </table>
                   </form>
             <?php 
-                  }
+            
+               }
             ?>
             
            </div>
           </div>
-       </body>
-      </fieldset>
-     </fieldset>
+     </body>
+    </fieldset>
+  </fieldset>
+
  <?php
         include("loginfooter.html");
 

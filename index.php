@@ -1,11 +1,12 @@
 
- <?php
+  <?php
       error_reporting(0);
       session_start();
       
-      include('header.php');
       include('lib.php');
-  ?>
+      include('header.php');
+      
+   ?>
        <fieldset class='loginwall'>
                   
     <?php
@@ -23,8 +24,9 @@
            <div class="menubar" style="padding-left: 50%;">
                              <table id="menu"><tr>
                                         <?php
+                                        
                                         if(isset($_SESSION['stdname'])){
-                                              header('Location: stdwelcome.php');
+                                            relocateHeader('stdwelcome.php');
                                           }
 
                                         else{    
@@ -40,26 +42,14 @@
                               </table>
                           </div>
            
-        
-           
-           
-       <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">LOGIN </b></font> </legend>
+     <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">LOGIN </b></font> </legend>
 
     
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
- <html>
-        <head>
-          <title>Sign In</title>
-          <link rel="stylesheet" type="text/css" href="sc.css"/>
-        </head>
-
-    
-            <body id="register">
+      <body id="register">
                 <?php
 
                   if($_GLOBALS['message']){
-                      echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
-                     // printmessage();
+                      printmessage($_GLOBALS['message']);
                   }
                 ?>
 

@@ -8,7 +8,7 @@ session_start();
  
  ?>
 <fieldset class="loginwall2">
-<fieldset><legend><font color='black'  size="4"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">TEST MANAGE </b></font></legend>
+
 
 <?php
 
@@ -22,7 +22,7 @@ session_start();
     }
 
     else if (isset($_REQUEST['dashboard'])) {
-        header('Location: admwelcome.php');
+        header('Location: ../stdwelcome.php');
     }
     
     else if (isset($_REQUEST['delete'])) {
@@ -199,21 +199,16 @@ session_start();
         <body id="test">
             
             
-                <?php
-                if ($_GLOBALS['message']) {
-                   echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
-                }
-                ?>
+              
                         <div id="container">
                             <div class="header">
 
                             </div>
            <form name="testmng" action="testmng.php" method="post">
                               
-                                     <div style="width:60%;height:80%;border:1px solid #000;padding-left:30%;border-color: #36AE79;">
-                                           <div class="menubar">
+                    <div class="menubar">
 
-                                         <table id="menu"><tr style="float:right;">
+                        <table id="menu" style="margin-left: 40%;"><tr>
                                         
                                         
                         <?php
@@ -221,24 +216,9 @@ session_start();
                         ?>
                                                 <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
 
+                           
                         <?php
-                            if(isset($_REQUEST['add'])) {
-                        ?>
-                                                <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                                                <td><input type="submit" value="Save" name="savea" class="subbtn" onclick="validatetestform('testmng')" title="Save the Changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
-
-                        <?php
-                            }
-
-                            else if(isset($_REQUEST['edit'])) { 
-                        ?>
-                                                <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                                                <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validatetestform('testmng')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
-
-                        <?php
-                            } 
-
-                            else{ 
+                            if(!isset($_REQUEST['add']) && !isset($_REQUEST['edit'])){ 
                         ?>
                                                 <td><input type="submit" value="Delete" name="delete" class="subbtn" title="Delete" style="color: #36AE79;height: 40px;width: 180px" /></td>
                                                 <td><input type="submit" value="Add" name="add" class="subbtn" title="Add" style="color: #36AE79;height: 40px;width: 180px" /></td>
@@ -251,19 +231,24 @@ session_start();
                                                  <?php
                          } 
                         ?>
-                                            </tr></table>
+                       </tr></table>
 
-                                        </div>
-                                     </div>
+                  </div>
 
-                                   <div class="page">
-                        <?php
-
+       <fieldset><legend><font color='black'  size="4"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">TEST MANAGE </b></font></legend>
+            
+           
+           <div class="page">
+             <?php
+                 if ($_GLOBALS['message']) {
+                    echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+                 }
                 
                 if (isset($_SESSION['admname'])) {
 
                     if (isset($_REQUEST['forpq']))
                         echo "<div class=\"pmsg\" style=\"text-align:center\"> Which test questions Do you want to Manage? <br/><b>Help:</b>Click on Questions button to manage the questions of respective tests</div>";
+                   
                     if (isset($_REQUEST['add'])) {
 
                 ?>
@@ -329,6 +314,12 @@ session_start();
                                             <td><input type="text" name="testcode" value="" size="16" onkeyup="isalphanum(this)" /></td>
                                             <td><div class="help"><b>Note:</b><br/>Candidates must enter<br/>this code in order to <br/> take the test</div></td>
                                         </tr>
+                                        
+                                        <tr>
+                                            <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                            <td><input type="submit" value="Save" name="savea" class="subbtn" onclick="validatetestform('testmng')" title="Save the Changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
+   
+                                        </tr>    
 
                                     </table>
                                   
@@ -336,7 +327,7 @@ session_start();
                 <?php
                     }
                     
-                    else if (isset($_REQUEST['edit'])) {
+                    else if (isset($_REQUEST['edit'])){
 
                         $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                         
@@ -407,6 +398,11 @@ session_start();
                                             <td><input type="text" name="testcode" value="<?php echo htmlspecialchars_decode($r['tcode'], ENT_QUOTES); ?>" size="16" onkeyup="isalphanum(this)" /></td>
                                             <td><div class="help"><b>Note:</b><br/>Candidates must enter<br/>this code in order to <br/> take the test</div></td>
                                         </tr>
+                                        
+                                        <tr>
+                                             <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                              <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validatetestform('testmng')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                         </tr>
 
                                     </table>
                 <?php

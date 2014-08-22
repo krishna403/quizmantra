@@ -3,7 +3,6 @@
 
 error_reporting(0);
 session_start();
-//include_once 'oesdb.php';
 include('lib.php');
 include('header.php');
 
@@ -11,14 +10,9 @@ include('header.php');
 
 <fieldset class='loginwall6'>
     
-<?php
-
-      editprofile();
-                           
-?>
-
-
-   
+ <?php
+        editprofile();     //function calling 
+ ?>
        
         <div id="container" style="padding-left: 50%;">
       
@@ -26,42 +20,27 @@ include('header.php');
                
                 <div class="menubar">
                      <table id="menu"><tr>
-                           <?php if(isset($_SESSION['stdname'])) {
-                                  
-                               ?>
-
-                            
+                           <?php
+                               if(isset($_SESSION['stdname'])) {
+                            ?>
                             <td><input type="submit" value="HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>                       
                             <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
                                                                                                    echo $_SESSION['stdname'];
 
-
-                                                                                                  //    echo $rowsc[Name];
                                                      ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px"/></b></td>
 
                      </tr></table>
                 </div>
-             
          </div>
        
-       <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">LOGIN </b></font> </legend>
+   <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">EDIT PROFILE </b></font> </legend>
        
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
- <html>
-  <head>
-    <title>Edit Profile</title>
-    <link rel="stylesheet" type="text/css" href="sc.css"/>
-    <script type="text/javascript" src="validate.js" ></script>
-    </head>
-  <body >
+    <body>
+        
        <?php
-
-        if($_GLOBALS['message']) {
-           // echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
-             echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$msg."</font></b></div>";
-        }
+          if($_GLOBALS['message']) {
+              printmessage($_GLOBALS['message']);
+           }
         ?>
       
       <div class="page">
@@ -69,8 +48,8 @@ include('header.php');
           <?php 
                $result=$db->query("select stdid,stdname,stdpassword as stdpass ,emailid,contactno,address,city,pincode,tc from student where stdname='".$_SESSION['stdname']."';");
                         if(mysql_num_rows($result)==0) {
-                           header('Location: stdwelcome.php');
-                        }
+                            relocateHeader('stdwelcome.php');
+                         }
                         
                         else if($r= $db->fetch_array()){
            ?>
@@ -83,7 +62,7 @@ include('header.php');
 
               </tr>
 
-                      <tr>
+                <tr>
                   <td>Password</td>
                   <td><input type="password" name="password" value="<?php echo htmlspecialchars_decode($r['stdpass'],ENT_QUOTES); ?>" size="16" onkeyup="isalphanum(this)" /></td>
                  
@@ -115,25 +94,20 @@ include('header.php');
                   <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validateform('editprofile')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
                   <td><input type="submit" value="Cancel" name="dashboard" class="subbtn" onclick="validateform('editprofile')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
               </tr>
-              
-           
-           ?>   
-              
-
             </table>
-<?php
-                      $db->_destruct();
-                        }
-                        
-                 }
-  ?>
-      </div>
+    <?php
+          $db->_destruct();
+            }
+     }
+    ?>
+          
+         </div>
 
-           </form>
-      
+        </form>
       </div>
   </body>
+ </fieldset>
 </fieldset>
-</fieldset>
+
 <?php
   include('loginfooter.html');

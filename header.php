@@ -4,11 +4,8 @@
  <?php
  
       include 'db/class.php';
-     // include_once("Class.Db.php");
       
       $db=new Db("localhost","root","mummy","quizmantra", true);
- //include('db/class.php');
- //include_once("db/Class.Db.php");
  
  ?>
  <div id="header">
@@ -16,8 +13,7 @@
           
             <title>QuizMantra: Krishna</title>
             <link href="sc.css" type="text/css" rel="stylesheet"></link>
-           
-         <!--   <script type="text/javascript" src="photopopup.js" charset="utf-8"></script>-->
+             <script type="text/javascript" src="validate.js" ></script>
             
       </head>
  

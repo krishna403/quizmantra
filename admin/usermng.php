@@ -23,7 +23,7 @@ include('../header.php');
    }
    
    else if (isset($_REQUEST['dashboard'])) {
-    header('Location: admwelcome.php');
+    header('Location: ../stdwelcome.php');
    }
    
    else if (isset($_REQUEST['tcmng'])) {

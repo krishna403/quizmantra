@@ -86,9 +86,10 @@ include('header.php');
         <form id="summary" action="summary.php" method="post">
             <div class="menubar">
 
-                         <?php if(isset($_SESSION['stdname'])) {
+         <?php 
+             if(isset($_SESSION['stdname'])) {
                           // Navigations
-                          ?>
+         ?>
            </div>
             
      
@@ -142,17 +143,17 @@ include('header.php');
                                     {
                                         echo "<td>".htmlspecialchars_decode($r['answered'],ENT_QUOTES)."</td>";
                                     }
-                                    echo"<td><input type=\"submit\" value=\"Change ".$r['qnid']."\" name=\"change\" class=\"ssubbtn\" /></td></tr>";
+                                    echo"<td><input type=\"submit\" value=\"Change ".$r['qnid']."\" name=\"change\" class=\"ssubbtn\"style='color: #36AE79;height: 35px;width: 120px' /></td></tr>";
                                 }
 
                                 ?>
               <tr>
-                  <td colspan="3" style="text-align:center;"><input type="submit" name="finalsubmit" value="Final Submit" class="subbtn"/></td>
+                  <td colspan="3" style="text-align:center;"><input type="submit" name="finalsubmit" value="Final Submit" class="subbtn" style="color: #36AE79;height: 40px;width: 180px"/></td>
               </tr>
                     </table>
                             <?php
                             }
-                            $db->_destruct();
+                         $db->_destruct();
 
                     }
                     ?>
