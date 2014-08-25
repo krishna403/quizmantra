@@ -3,7 +3,8 @@
 
 error_reporting(0);
 session_start();
-  //include_once 'oesdb.php';
+
+  include('lib.php');
   include('header.php');
   ?>
 
@@ -11,134 +12,14 @@ session_start();
  <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">VIEW RESULT</b></font> </legend>
 
 <?php
-  
-  $final=false;
-    if(!isset($_SESSION['stdname'])) {
-        $_GLOBALS['message']="Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
-    }
-    
-    else if(isset($_REQUEST['logout'])){
-           unset($_SESSION['stdname']);
-           header('Location: ../index.php');
-
-    }
-    
-    else if(isset($_REQUEST['dashboard'])){
-     header('Location: stdwelcome.php');
-
-    }
-    
-    
-    else if(isset($_REQUEST['next']) || isset($_REQUEST['summary']) || isset($_REQUEST['viewsummary'])) {
-        $answer='unanswered';
-        if(time()<strtotime($_SESSION['endtime'])){
-            if(isset($_REQUEST['markreview'])){
-                $answer='review';
-            }
-            
-            else if(isset($_REQUEST['answer'])){
-                $answer='answered';
-            }
-            
-            else{
-                $answer='unanswered';
-            }
-            
-            
-            if(strcmp($answer,"unanswered")!=0){
-                
-                if(strcmp($answer,"answered")==0){
-                    $query="update studentquestion set answered='answered',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
-                }
-                
-                else{
-                    $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
-                }
-                
-                if(!$db->query($query)){
-                      $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
-                }
-               $db->_destruct();
-            }
-            
-            
-           if(isset($_REQUEST['viewsummary'])){
-                 header('Location: summary.php');
-            }
-            if(isset($_REQUEST['summary'])){
-                 header('Location: summary.php');
-             }
-        }
-        
-        
-        if((int)$_SESSION['qn']<(int)$_SESSION['tqn']){
-             $_SESSION['qn']=$_SESSION['qn']+1;
-        }
-        
-        if((int)$_SESSION['qn']==(int)$_SESSION['tqn']){
-           $final=true;
-        }
-
-    }
-    
-    
-    
-    else if(isset($_REQUEST['previous'])){
-        
-        $answer='unanswered';
-        
-        if(time()<strtotime($_SESSION['endtime'])){
-            
-            if(isset($_REQUEST['markreview'])){
-                $answer='review';
-            }
-            
-            else if(isset($_REQUEST['answer'])){
-                $answer='answered';
-            }
-            
-            else{
-                $answer='unanswered';
-            }
-            
-            if(strcmp($answer,"unanswered")!=0){
-                if(strcmp($answer,"answered")==0){
-                    $query="update studentquestion set answered='answered',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
-                }
-                
-                else{
-                    $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
-                }
-                
-                if(!$db->query($query)){
-                $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
-                }
-                $db->_destruct();
-            }
-        }
-        
-        
-        if((int)$_SESSION['qn']>1){
-            $_SESSION['qn']=$_SESSION['qn']-1;
-        }
-
-    }
-    
-    else if(isset($_REQUEST['fs'])){
-      header('Location: testack.php');
-   }
-    
+      
+      testconductor();
+ 
  ?>
 
     <?php
     header("Cache-Control: no-cache, must-revalidate");
     ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
- <html>
-  <head>
-    <title>Test Exexution</title>
-  
-    <link rel="stylesheet" type="text/css" href="sc.css"/>
     <script type="text/javascript" src="validate.js" ></script>
     <script type="text/javascript" src="cdtimer.js" ></script>
     <script type="text/javascript" >
@@ -177,7 +58,7 @@ session_start();
        <?php
 
         if($_GLOBALS['message']) {
-            echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+            printmessage($_GLOBALS['message']);
            }
         ?>
       <div id="container">

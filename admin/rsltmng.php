@@ -2,6 +2,9 @@
 error_reporting(0);
 session_start();
 include('../header.php');
+
+$attemptarr=array();
+$colums=array();
 ?>
 
 <fieldset class='loginwall3'>
@@ -89,7 +92,7 @@ include('../header.php');
 
                                 $r=mysql_fetch_array($result);
                                 ?>
-                        <table cellpadding="20" cellspacing="30" border="0" style="background:#ffffff url(../images/page.gif);text-align:left;line-height:20px;">
+                        <table cellpadding="20" cellspacing="30" border="0" align="center" style="background:#ffffff url(../images/page.gif);text-align:left;line-height:20px;">
                             <tr>
                                 <td colspan="2"><h3 style="color:#0000cc;text-align:center;">Test Summary</h3></td>
                             </tr>
@@ -122,34 +125,48 @@ include('../header.php');
 
                         </table>
                                 <?php
+                                 $i=0;
+                                $stdid=$db->query("SELECT DISTINCT stdid FROM studenttest WHERE testid=".$_REQUEST['testid'].";");
                                 
+                                 while($std=mysql_fetch_array($stdid)) {
+                                     //echo $std['stdid'];
+                                  
                                 
-                                $attempt=$db->query("(select attemptid from studentquestion as sq,question as q where sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
+                               
+                                $attempt=$db->query("SELECT DISTINCT attemptid from studentquestion where testid=".$_REQUEST['testid']." and stdid=".$std['stdid'].";");
                                  while($rq=mysql_fetch_array($attempt)) {
-                                     echo $rq['attemptid'];
-                                 }
-                                
-                                
-                                
-
-                                 $result1=$db->query("select s.stdname,s.emailid,IFNULL((select sum(q.marks) from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid and sq.stdanswer=q.correctanswer),0) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid'].";" );
-
-                                   if(mysql_num_rows($result1)==0) {
-                                        echo"<h3 style=\"color:#0000cc;text-align:center;\">No Students Yet Attempted this Test!</h3>";
-                                     }
-                                     
-                                else {
-                                    ?>
-                                        <table cellpadding="30" cellspacing="10" class="datatable">
+                                     echo "att id ".$rq['attemptid'];
+                                     $attemptarr[$i]=$rq['attemptid'];
+                                     $i++;
+                                  }
+                                  
+                               }
+                                 $lengthofatt=count($attemptarr);
+                                 ?>
+                    
+                             <table cellpadding="30" cellspacing="10" class="datatable" align="center">
                                             <tr>
                                                 <th>Student Name</th>
                                                 <th>Email-ID</th>
                                                 <th>Obtained Marks</th>
                                                 <th>Result(%)</th>
+                                                <th>Attempt</th>
 
-                                            </tr>
-                                                            <?php
-                                                            while($r1=mysql_fetch_array($result1)) {
+                                 </tr>
+                    
+                              <?php
+                                 
+                                 for($i=0;$i<$lengthofatt;$i++){
+                                   $atte=$i+1;
+                                 $result1=$db->query("select s.stdname,s.emailid,IFNULL((select sum(q.marks) from studentquestion as sq,question as q where q.qnid=sq.qnid and sq.testid=".$_REQUEST['testid']." and sq.stdid=st.stdid and sq.stdanswer=q.correctanswer and sq.attemptid=".$attemptarr[$i]."),0) as om from studenttest as st, student as s where s.stdid=st.stdid and st.testid=".$_REQUEST['testid']." and st.attemptid=".$attemptarr[$i].";" );
+                                         
+                               
+                                   if(mysql_num_rows($result1)==0){
+                                        echo "</table><h3 style=\"color:#0000cc;text-align:center;\">No More Students Yet Attempted this Test!</h3>";
+                                     }
+                                     
+                                else{
+                                      while($r1=mysql_fetch_array($result1)) {
 
                                                                 ?>
                                             <tr>
@@ -157,14 +174,13 @@ include('../header.php');
                                                 <td><?php echo htmlspecialchars_decode($r1['emailid'],ENT_QUOTES); ?></td>
                                                 <td><?php echo $r1['om']; ?></td>
                                                 <td><?php echo ($r1['om']/$r['maxmarks']*100)." %"; ?></td>
-
+                                                <td><?php echo $atte; ?></td>
 
                                             </tr>
                                                             <?php
-
-                                                            }
-
+                                                }
                                       }
+                                   }
                                 }
                                 
                               

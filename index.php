@@ -12,7 +12,7 @@
     <?php
     
       if(isset($_REQUEST['register'])){
-          relocateHeader('register.php');
+         // relocateHeader('register.php');
       }
       
       else if($_REQUEST['stdsubmit']){

@@ -21,7 +21,7 @@ session_start();
     }
     
     else if (isset($_REQUEST['dashboard'])){
-       header('Location: tcwelcome.php');
+       header('Location: ../stdwelcome.php');
     } 
 
     else if (isset($_REQUEST['delete'])){

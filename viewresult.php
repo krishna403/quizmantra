@@ -5,6 +5,8 @@ error_reporting(0);
 session_start();
 
  // include_once 'oesdb.php';
+
+  include('lib.php');
   include('header.php');
   
    $idarr=array();
@@ -38,15 +40,6 @@ session_start();
         }
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-    <head>
-        <title>Result</title>
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
-        <script type="text/javascript" src="validate.js" ></script>
-    </head>
-    
-    
     <body >
         
         <div id="container" >
@@ -99,7 +92,7 @@ session_start();
             $i=0;
                       
                 if($_GLOBALS['message']) {
-                     echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+                    printmessage($_GLOBALS['message']);
                 }
             ?>
            
@@ -235,22 +228,7 @@ session_start();
                                     <head>
                                       <script type="text/javascript" src="https://www.google.com/jsapi"></script>
                                       <script type="text/javascript">
-                                          
-                                        //  var arrmain=[];
-                                       //   var arrx=[];
-                                      //    var arry=[];
-                                     //     var i=0;
-                                          
-                                          <?php 
-                                      //       for($j=0 ; $j< (int)$i ; $j++){
-                                            ?>  
-                                        //      arrx[i]=Number(<?php// echo $marksarr[$j] ;?>);
-                                        //      arry[i]=Number(<?php// echo $idarr[$j] ;?>);
-                                             
-                                       //      i++;
-                                         <?php     
-                                      //    }
-                                        ?>
+                                       
                                         google.load("visualization", "1", {packages:["corechart"]});
                                         google.setOnLoadCallback(drawChart);
                                         function drawChart() {
@@ -295,13 +273,6 @@ session_start();
                    </table> 
                         
                     <?php
-                    
-                       // echo htmlspecialchars_decode($r['testname'],ENT_QUOTES);
-                        
-                    
-                    //   echo $marksarr[0]."   ".$idarr[0];
-                   //    echo $marksarr[8]."  ".$idarr[8];
-                  //    echo $i;
                     
               }
                         

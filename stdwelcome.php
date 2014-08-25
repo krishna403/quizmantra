@@ -12,15 +12,17 @@ $flip=0;
         if(!isset($_SESSION['stdname']) && !isset($_SESSION['tcname']) && !isset($_SESSION['admname']) ){
             $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
         }
+        
+      
     
         if(isset($_REQUEST['logout'])){
                 unset($_SESSION['stdname']);
                 
-                if(isset($_SESSION['tcid'])){
+              if(isset($_SESSION['tcid'])){
                    unset($_SESSION['tcname']);
-                }
+               }
                 
-                if(isset($_SESSION['admname'])){
+              if(isset($_SESSION['admname'])){
                    unset($_SESSION['admname']); 
                 }
                 
@@ -115,7 +117,9 @@ $flip=0;
                         
                            <td style="padding-left:25%;width:60%" rowspan="2">
                                
-                              <?php if(isset($_SESSION['stdname']) && $flip==0){ ?>
+                              <?php if(isset($_SESSION['stdname']) && $flip==0){
+                                  unset($_SESSION['admname']);
+                                  ?>
                                
                               <div style="width:50%;height:80%;border:5px solid #000;padding-left:15%;border-color: #36AE79">                    
                            
@@ -192,6 +196,7 @@ $flip=0;
                               <?php  } 
                               
                                if(isset($_SESSION['admname'])){ 
+                                   unset($_SESSION['stdname']);
                               
                               ?>
                                <div style="width:50%;height:80%;border:5px solid #000;padding-left:15%;border-color: #36AE79">                    

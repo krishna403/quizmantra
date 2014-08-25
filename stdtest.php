@@ -122,7 +122,7 @@ include('header.php');
                           <td style="padding-bottom: 0%;padding-left: 2%;padding-right: 40%;"><div style="width:90%; background-image:url(images/whiteboardhome.jpg) ;height:320px; width:600px; background-size: 600px 320px"><p style="padding-top: 5%;padding-left: 5%;font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;"><em><b>Quiz Mantra</b></em> provides online quizzes <br>and different subject's tests. <em><b>Online quizzes</b></em> are a popular form of entertainment for web surfers. Online quizzes are generally for entertainment and knowledge purposes though some online quiz like us. Websites feature online quizzes on many subjects.<br><br>Mantra Quizzes are set up to actually test knowledge or identify a person's attributes. <br>Some companies use online quizzes as an efficient way of testing a potential hire's knowledge without that candidate needing to travel. Online dating services often use personality quizzes to find a match between similar members.</p></td>
                       </tr>
                  </table>  
-           </div>
+              </div>
                                  
                        <?php
                                 }
@@ -131,7 +131,7 @@ include('header.php');
                         }
                     ?>
 
-                </div>
+                 </div>
 
             </form>
             

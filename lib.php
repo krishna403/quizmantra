@@ -6,12 +6,13 @@
     /* function for page relocation using header*/
 
     function relocateHeader($location){
-
+       
         if($location==''){
                studentSubmit();
           }
        else {
-           header('Location:'.$location);
+      //     header('Location: testack.php');
+           header("Location: $location");
         } 
     }
 
@@ -96,7 +97,7 @@
                        unset($_GLOBALS['message']);    
                        echo $_REQUEST['name'];
                        echo $_REQUEST['password'];
-                       header('Location: stdwelcome.php');
+                       relocateHeader('stdwelcome.php');
                    }
               }
 
@@ -119,7 +120,7 @@
                             }
 
                       unset($_GLOBALS['message']);
-                      header('Location: stdwelcome.php');
+                      relocateHeader('stdwelcome.php');
                   }
 
                   else{
@@ -479,4 +480,218 @@
            }
 
 
+    }
+    
+    
+    /**
+     * testtake function used when test will be finish 
+     * here we are unset the most of functions
+     * **/
+    
+    
+    function testaken(){
+        
+        global $db;
+        global $_GLOBALS;
+        
+            if(!isset($_SESSION['stdname'])) {
+             $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
+            }
+            else if(isset($_REQUEST['logout'])){
+                unset($_SESSION['stdname']);
+                relocateHeader('index.php');
+            }
+            else if(isset($_REQUEST['dashboard'])){
+                relocateHeader('stdwelcome.php');
+            }
+
+            if(isset($_SESSION['starttime'])){
+                unset($_SESSION['starttime']);
+                unset($_SESSION['endtime']);
+                unset($_SESSION['tqn']);
+                unset($_SESSION['qn']);
+                unset($_SESSION['duration']);
+
+                $db->query("update studenttest set status='over' where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
+            }
+
+    }
+    
+    
+        
+    /**
+     * test category function 
+     * category and subjects 
+     * **/
+    
+    function testcategory(){
+        
+        
+         global $db;
+        global $_GLOBALS;
+        
+        
+           if (!isset($_SESSION['stdname'])) {
+                $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
+            }
+
+
+            else if (isset($_REQUEST['logout'])) {
+               unset($_SESSION['stdname']);
+               header('Location: index.php');
+           }
+
+            else if (isset($_REQUEST['dashboard'])) {
+                header('Location: stdwelcome.php');
+            }
+
+              if($_SERVER['REQUEST_METHOD']=='POST'){ 
+
+                       if(isset($_POST['submit'])){
+
+                           echo $_POST['subcat'];
+
+                           $_SESSION['testid']=$_POST['subcat'];
+
+                          header('Location: stdtest.php');
+
+                       }
+
+
+              $db->_destruct();
+           }
+    }
+    
+    
+    /**
+     * test conductor function 
+     * question paper and formats 
+     * **/
+    
+    
+    function testconductor(){
+        
+         global $db;
+          global $_GLOBALS;
+          
+        
+
+            $final=false;
+               if(!isset($_SESSION['stdname'])) {
+                   $_GLOBALS['message']="Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
+               }
+
+               else if(isset($_REQUEST['logout'])){
+                      unset($_SESSION['stdname']);
+                      header('Location: ../index.php');
+
+               }
+
+               else if(isset($_REQUEST['dashboard'])){
+                header('Location: stdwelcome.php');
+
+               }
+
+
+               else if(isset($_REQUEST['next']) || isset($_REQUEST['summary']) || isset($_REQUEST['viewsummary'])) {
+                   $answer='unanswered';
+                   if(time()<strtotime($_SESSION['endtime'])){
+                       if(isset($_REQUEST['markreview'])){
+                           $answer='review';
+                       }
+
+                       else if(isset($_REQUEST['answer'])){
+                           $answer='answered';
+                       }
+
+                       else{
+                           $answer='unanswered';
+                       }
+
+
+                       if(strcmp($answer,"unanswered")!=0){
+
+                           if(strcmp($answer,"answered")==0){
+                               $query="update studentquestion set answered='answered',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
+                           }
+
+                           else{
+                               $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
+                           }
+
+                           if(!$db->query($query)){
+                                 $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
+                           }
+                          $db->_destruct();
+                       }
+
+
+                      if(isset($_REQUEST['viewsummary'])){
+                            header('Location: summary.php');
+                       }
+                       if(isset($_REQUEST['summary'])){
+                            header('Location: summary.php');
+                        }
+                   }
+
+
+                   if((int)$_SESSION['qn']<(int)$_SESSION['tqn']){
+                        $_SESSION['qn']=$_SESSION['qn']+1;
+                   }
+
+                   if((int)$_SESSION['qn']==(int)$_SESSION['tqn']){
+                      $final=true;
+                   }
+
+               }
+
+
+
+               else if(isset($_REQUEST['previous'])){
+
+                   $answer='unanswered';
+
+                   if(time()<strtotime($_SESSION['endtime'])){
+
+                       if(isset($_REQUEST['markreview'])){
+                           $answer='review';
+                       }
+
+                       else if(isset($_REQUEST['answer'])){
+                           $answer='answered';
+                       }
+
+                       else{
+                           $answer='unanswered';
+                       }
+
+                       if(strcmp($answer,"unanswered")!=0){
+                           if(strcmp($answer,"answered")==0){
+                               $query="update studentquestion set answered='answered',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
+                           }
+
+                           else{
+                               $query="update studentquestion set answered='review',stdanswer='".htmlspecialchars($_REQUEST['answer'],ENT_QUOTES)."' where stdid=".$_SESSION['stdid']." and testid=".$_SESSION['testid']." and qnid=".$_SESSION['qn'].". and attemptid=".$_SESSION['attempt'].";";
+                           }
+
+                           if(!$db->query($query)){
+                           $_GLOBALS['message']="Your previous answer is not updated.Please answer once again";
+                           }
+                           $db->_destruct();
+                       }
+                   }
+
+
+                   if((int)$_SESSION['qn']>1){
+                       $_SESSION['qn']=$_SESSION['qn']-1;
+                   }
+
+               }
+
+               else if(isset($_REQUEST['fs'])){
+                 header('Location: testack.php');
+              }
+
+
+        
     }

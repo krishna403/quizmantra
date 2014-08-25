@@ -2,8 +2,10 @@
 <?php
 error_reporting(0);
 session_start();
-//include_once 'oesdb.php';
-include('header.php');
+
+    
+    include('lib.php');
+    include('header.php');
 ?>
 
  <fieldset class="loginwall3">
@@ -25,26 +27,20 @@ include('header.php');
     
     else if(isset($_REQUEST['change'])){
        $_SESSION['qn']=substr($_REQUEST['change'],7);
-       header('Location: testconducter.php');
+         header('Location: testconductor.php');
     }
     
     else if(isset($_REQUEST['finalsubmit'])){
-     header('Location: testack.php');
-    }
+       header('Location: testack.php');
+       //  header('Location: testack.php');
+    } 
     
      else if(isset($_REQUEST['fs'])){
       header('Location: testack.php');
     }
 
-   
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html>
-  <head>
-    <title>Summary</title>
-
-    <link rel="stylesheet" type="text/css" href="sc.css"/>
     <script type="text/javascript" src="validate.js" ></script>
     <script type="text/javascript" src="cdtimer.js" ></script>
     <script type="text/javascript" >
@@ -75,9 +71,6 @@ include('header.php');
     -->
     </script>
 
-
-    </head>
-    
     
   <body >
       
@@ -106,7 +99,7 @@ include('header.php');
           
             <?php
                     if($_GLOBALS['message']) {
-                     echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
+                       printmessage($_GLOBALS['message']);
                      }
            ?>
           

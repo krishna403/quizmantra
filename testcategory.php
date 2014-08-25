@@ -2,7 +2,8 @@
 
 error_reporting(0);
   session_start();
-  //include_once 'oesdb.php';
+  
+  include('lib.php');
   include('header.php');
   
   
@@ -10,47 +11,11 @@ error_reporting(0);
 <fieldset class="loginwall">
 
 <?php
-    if (!isset($_SESSION['stdname'])) {
-        $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
-    }
-    
    
-    else if (isset($_REQUEST['logout'])) {
-       unset($_SESSION['stdname']);
-       header('Location: index.php');
-   }
-
-    else if (isset($_REQUEST['dashboard'])) {
-        header('Location: stdwelcome.php');
-    }
-
-      if($_SERVER['REQUEST_METHOD']=='POST'){ 
-
-               if(isset($_POST['submit'])){
-                   
-                   echo $_POST['subcat'];
-                   
-                   $_SESSION['testid']=$_POST['subcat'];
-                  
-                  header('Location: stdtest.php');
-                   
-               }
-               
-   
-      $db->_destruct();
-   }
-  
- ?>
-   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-   <html>
-     <head>
-        <title>Welcome</title>
+  testcategory();
+ ?>    
         
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
-        <script type="text/javascript" src="validate.js" ></script>
-      </head>         
-        
-      <body>
+    <body>
          <div id="container">
        
               <form id="stdtest" action="testcategory.php" method="post">
@@ -75,88 +40,86 @@ error_reporting(0);
             <fieldset><legend><font color='black'  size="4"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">TEST CATEGORY</b></font></legend> 
          
                    
-                                    <div class="page">
-                                                   
-                                                    <?php
-                                                        if ($_GLOBALS['message']){
-                                                          echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
-                                                        }
-                                                     ?>
+                    <div class="page">
+
+                                    <?php
+                                        if ($_GLOBALS['message']){
+                                            printmessage($_GLOBALS['message']);
+                                        }
+                                     ?>
 
 
-                                                     <script language=JavaScript>
-                                                             function reload(form) {
-                                                             var val=form.cat.options[form.cat.options.selectedIndex].value;
-                                                             self.location='testcategory.php?cat=' + val ;
-                                                             }
-                                                     </script>
+                                     <script language=JavaScript>
+                                             function reload(form) {
+                                             var val=form.cat.options[form.cat.options.selectedIndex].value;
+                                             self.location='testcategory.php?cat=' + val ;
+                                             }
+                                     </script>
 
-                                                  <table cellpadding="10" cellspacing="10">
+                                  <table cellpadding="10" cellspacing="10">
 
-                                                      <tr>  
-                                                          <td rowspan="4" style="padding-right:600px; padding-left: 40px;">
-                                                             <img src="images/whiteboard.jpg" alt="Molecule Wallpaper" width="600" height="430" />
+                                      <tr>  
+                                            <td rowspan="4" style="padding-right:600px; padding-left: 40px;">
+                                               <img src="images/whiteboard.jpg" alt="Molecule Wallpaper" width="600" height="430" />
 
-                                                                    </td>
-                                                           </tr>
-                                                         
-                                                             
-                                                             <?Php
+                                                    </td>
+                                             </tr>
 
-                                                                            $cat=$_GET['cat']; 
 
-                                                                                    $quer2= $db->query("SELECT subname,subid FROM subject");
+                                             <?Php
 
-                                                                                    if(isset($cat)){
-                                                                                         $quer=$db->query("SELECT testname,testid FROM test WHERE subid='$cat' ");
-                                                                                      }
+                                                            $cat=$_GET['cat']; 
 
-                                                                                  //  else{
-                                                                                  //     $quer=$db->query("SELECT testname FROM test WHERE subid='$cat' ");
-                                                                                  //  } 
+                                                                    $quer2= $db->query("SELECT subname,subid FROM subject");
 
-                                                                           echo "<form method=post name=f1 action=''>";
-                                                                         ?> 
-                                                      <tr><td><?php
-                                                                           
-                                                                               echo "<select style='height:40px;width:200px;' name='cat' onchange=\"reload(this.form)\"><option value=''>Select one</option>";
+                                                                    if(isset($cat)){
+                                                                         $quer=$db->query("SELECT testname,testid FROM test WHERE subid='$cat' ");
+                                                                      }
 
-                                                                                    while($row2 = mysql_fetch_array($quer2)){
-                                                                                           $subid=$row2['subid'];
-                                                                                           $subname=$row2['subname'];
+                                                                  //  else{
+                                                                  //     $quer=$db->query("SELECT testname FROM test WHERE subid='$cat' ");
+                                                                  //  } 
 
-                                                                                        if($row2['subid']==@$cat){
-                                                                                            echo "<option selected value=$subid>$subname</option>"."<BR>";
-                                                                                         }
+                                                           echo "<form method=post name=f1 action=''>";
+                                                         ?> 
+                                                <tr><td><?php
 
-                                                                                        else{
-                                                                                            echo  "<option value=$subid>$subname</option>";
-                                                                                         }
-                                                                                     }
-                                                                               echo "</select>";   
+                                                               echo "<select style='height:40px;width:200px;' name='cat' onchange=\"reload(this.form)\"><option value=''>Select one</option>";
 
-                                                                               ?>
-                                                          </td><td><div style="border-left:2px solid #36AE79;height:100px"></div></td><td><?php
+                                                                    while($row2 = mysql_fetch_array($quer2)){
+                                                                           $subid=$row2['subid'];
+                                                                           $subname=$row2['subname'];
 
-                                                                               echo "<select style='height:40px;width:200px;' name='subcat'><option value=''>Select one</option>";
+                                                                        if($row2['subid']==@$cat){
+                                                                            echo "<option selected value=$subid>$subname</option>"."<BR>";
+                                                                         }
 
-                                                                                     while($row=mysql_fetch_array($quer)){
-                                                                                         $testname=$row['testname'];
-                                                                                         $testid=$row['testid'];
+                                                                        else{
+                                                                            echo  "<option value=$subid>$subname</option>";
+                                                                         }
+                                                                     }
+                                                               echo "</select>";   
 
-                                                                                        echo  "<option value=$testid>$testname</option>";
-                                                                                    }
+                                                               ?>
+                                                </td><td><div style="border-left:2px solid #36AE79;height:100px"></div></td><td><?php
 
-                                                                               echo "</select></td></tr>";
-                                                                      
-                                                                      echo "<td colspan=3 align=right><input type=submit value=Submit name='submit' style='color: #36AE79;height:40px;width:200px;'> | <a href=testcategory.php>Reset</a></td></tr>";
-                                                                   
-                                                                      echo "</form>";
-                                                                  ?>
+                                                               echo "<select style='height:40px;width:200px;' name='subcat'><option value=''>Select one</option>";
 
-                                                                        
-                                                          
-                                                      </table>
+                                                                     while($row=mysql_fetch_array($quer)){
+                                                                         $testname=$row['testname'];
+                                                                         $testid=$row['testid'];
+
+                                                                        echo  "<option value=$testid>$testname</option>";
+                                                                    }
+
+                                                               echo "</select></td></tr>";
+
+                                                      echo "<td colspan=3 align=right><input type=submit value=Submit name='submit' style='color: #36AE79;height:40px;width:200px;'> | <a href=testcategory.php>Reset</a></td></tr>";
+
+                                                      echo "</form>";
+                                                  ?>
+
+                                  </table>
                         </div>
                </div>
             </body>

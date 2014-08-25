@@ -2,45 +2,18 @@
 
 error_reporting(0);
 session_start();
-//include_once 'oesdb.php';
+
+include('lib.php');
 include('header.php');
 
 ?>
    <fieldset class="loginwall">
     
- <?php
+   <?php
 
-    if(!isset($_SESSION['stdname'])) {
-        $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
-    }
-    else if(isset($_REQUEST['logout'])){
-        unset($_SESSION['stdname']);
-        header('Location: index.php');
-    }
-    else if(isset($_REQUEST['dashboard'])){
-         header('Location: stdwelcome.php');
-    }
-
-    if(isset($_SESSION['starttime'])){
-        unset($_SESSION['starttime']);
-        unset($_SESSION['endtime']);
-        unset($_SESSION['tqn']);
-        unset($_SESSION['qn']);
-        unset($_SESSION['duration']);
-
-        $db->query("update studenttest set status='over' where testid=".$_SESSION['testid']." and stdid=".$_SESSION['stdid'].". and attemptid=".$_SESSION['attempt'].";");
-    }
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-  <head>
-    <title>Test Acknowledgment</title>
-    <link rel="stylesheet" type="text/css" href="sc.css"/>
-    <script type="text/javascript" src="validate.js" ></script>
-    </head>
-  <body >
-       
+      testaken(); // call function
+   
+  ?>
       <div id="container">
       
            <form id="editprofile" action="editprofile.php" method="post">
@@ -75,7 +48,7 @@ include('header.php');
                 
                 <h3 style="color:#0000cc;text-align:center;">Your answers are Successfully Submitted. To view the Results <b><a href="viewresult.php">Click Here</a></b> </h3>
                 <?php
-                              }
+                         }
                 ?>
             </div>
 
