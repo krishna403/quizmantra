@@ -571,31 +571,30 @@
     
     function testconductor(){
         
-         global $db;
+         global $db,$answer,$final;
           global $_GLOBALS;
-          
         
-
-            $final=false;
+            
                if(!isset($_SESSION['stdname'])) {
                    $_GLOBALS['message']="Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
                }
 
                else if(isset($_REQUEST['logout'])){
                       unset($_SESSION['stdname']);
-                      header('Location: ../index.php');
+                      header('Location: index.php');
 
                }
 
                else if(isset($_REQUEST['dashboard'])){
-                header('Location: stdwelcome.php');
-
+                   header('Location: stdwelcome.php');
                }
 
 
                else if(isset($_REQUEST['next']) || isset($_REQUEST['summary']) || isset($_REQUEST['viewsummary'])) {
                    $answer='unanswered';
+                 
                    if(time()<strtotime($_SESSION['endtime'])){
+                       
                        if(isset($_REQUEST['markreview'])){
                            $answer='review';
                        }
@@ -692,6 +691,48 @@
                  header('Location: testack.php');
               }
 
-
         
     }
+    
+    
+    
+       /**
+     * summary of test 
+     * redirect
+     * **/
+    
+    
+      function summary(){
+          
+           
+         global $db;
+          global $_GLOBALS;
+        
+          
+           if(!isset($_SESSION['stdname'])) {
+                $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
+            }
+            else if(isset($_REQUEST['logout'])){
+                   unset($_SESSION['stdname']);
+                   header('Location: index.php');
+            }
+
+            else if(isset($_REQUEST['dashboard'])){
+                 header('Location: stdwelcome.php');
+             }
+
+            else if(isset($_REQUEST['change'])){
+               $_SESSION['qn']=substr($_REQUEST['change'],7);
+                 header('Location: testconductor.php');
+            }
+
+            else if(isset($_REQUEST['finalsubmit'])){
+               header('Location: testack.php');
+               //  header('Location: testack.php');
+            } 
+
+             else if(isset($_REQUEST['fs'])){
+              header('Location: testack.php');
+            }
+          
+      }

@@ -3,31 +3,34 @@
 
 error_reporting(0);
 session_start();
-//include_once '../oesdb.php';
+
+include('../lib.php');
 include('../header.php');
 
 ?>
-
 <fieldset class="loginwall2">
-
-
 <?php
 
-  if (!isset($_SESSION['admname']) || !isset($_SESSION['testqn'])) {
+  if((!isset($_SESSION['admname']) || !isset($_SESSION['testqn'])) && (!isset($_SESSION['tcname']) || !isset($_SESSION['testqn']))) {
     $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
    } 
   
    
   else if(isset($_REQUEST['logout'])) {
       
-       if(isset($_SESSION['admname'])){
-          unset($_SESSION['admname']);
-       }
-    
-    header('Location: ../index.php');
+         if(isset($_SESSION['tcname'])){
+             
+            unset($_SESSION['tcname']);
+            unset($_SESSION['stdname']);
+        }
+        
+       else
+         unset($_SESSION['admname']);
+       
+        header('Location: ../index.php');
   }
   
-  else if (isset($_REQUEST['managetests'])) {
+  else if (isset($_REQUEST['managetests'])){
     header('Location: testmng.php');
   }
   
@@ -139,15 +142,9 @@ include('../header.php');
     ?>
 
 
- <html>
-    <head>
-        <title>Manage Questions</title>
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
         <script type="text/javascript" src="../tiny_mce/tiny_mce.js"></script>
         <script type="text/javascript" src="../validate.js" ></script>
 
-       
-    </head>
     <body>
       
             <div id="container">
@@ -159,14 +156,14 @@ include('../header.php');
                 <table id="menu"><tr>
                         
                     <?php
-                      if (isset($_SESSION['admname']) && isset($_SESSION['testqn'])) {
+                      if ((isset($_SESSION['admname']) && isset($_SESSION['testqn'])) || (isset($_SESSION['tcname']) && isset($_SESSION['testqn']))) {
 
                     ?>
                        
                         <td><input type="submit" value="Manage Tests" name="managetests" class="subbtn" title="Manage Tests" style="color: #36AE79;height: 40px;width: 180px"/></td>
 
                     <?php
-                       if(!(isset($_REQUEST['add'])) && !(isset($_REQUEST['add'])) ){  
+                       if(!(isset($_REQUEST['add'])) && !(isset($_REQUEST['edit'])) ){  
                      ?>
                             
                         <td><input type="submit" value="Delete" name="delete" class="subbtn" title="Delete" style="color: #36AE79;height: 40px;width: 180px" /></td>
@@ -177,10 +174,11 @@ include('../header.php');
                      ?>
                      
                       <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
-                                                                                               if(isset($_SESSION['admname'])){
-                                                                                                                 echo $_SESSION['admname'];
-                                                                                                            }
-                                                                                    
+                                                                                               if(isset($_SESSION['tcname'])){
+                                                                                                        echo $_SESSION['tcname'];
+                                                                                                    }
+                                                                                                    else
+                                                                                                     echo $_SESSION['admname'];
                                               ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
                    <?php                   
                   }
@@ -212,7 +210,7 @@ include('../header.php');
                                         echo "<br><div class=\"pmsg\"><b> Test Name: <font color='#36AE79'>" . $_SESSION['testname'] . "</font><br/><br/>Status:<font color='#36AE79'> Still you need to create " . (htmlspecialchars_decode($r2['totalquestions'],ENT_QUOTES) - $r1['q']) . " Question/s. After that only, test will be available for candidates.</font></b></div>";
                        ?>
                         <?php
-                        if (isset($_SESSION['admname']) && isset($_SESSION['testqn'])) {
+                        if ((isset($_SESSION['admname']) && isset($_SESSION['testqn'])) || (isset($_SESSION['tcname']) && isset($_SESSION['testqn']))) {
 
                             if (isset($_REQUEST['add'])) {
                                

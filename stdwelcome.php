@@ -4,7 +4,12 @@
 error_reporting(0);
 session_start();
 
-$flip=0;
+
+   $flip=0;
+   
+   if($_REQUEST['flip']==1){
+       $flip=1;
+   }
 
  include('lib.php');
  include('header.php');
@@ -40,16 +45,7 @@ $flip=0;
         
        
 ?>
-
-<html>
-    <head>
-        <title>Welcome</title>
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
-    </head>
     <body>
-       
-        
-        
        <fieldset class='loginwall'>
         <div id="container">
           
@@ -82,9 +78,11 @@ $flip=0;
                                 <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php if(isset($_SESSION['stdname'])){
                                                                                                                echo $_SESSION['stdname'];
                                                                                                             }
+                                                                                                            
                                                                                                             else if(isset($_SESSION['tcname'])){
                                                                                                                 echo $_SESSION['tcname'];
-                                                                                                            }   
+                                                                                                            }  
+                                                                                                            
                                                                                                             else if(isset($_SESSION['admname'])){
                                                                                                                  echo $_SESSION['admname'];
                                                                                                             }
@@ -118,7 +116,7 @@ $flip=0;
                            <td style="padding-left:25%;width:60%" rowspan="2">
                                
                               <?php if(isset($_SESSION['stdname']) && $flip==0){
-                                  unset($_SESSION['admname']);
+                                     unset($_SESSION['admname']);
                                   ?>
                                
                               <div style="width:50%;height:80%;border:5px solid #000;padding-left:15%;border-color: #36AE79">                    
@@ -168,19 +166,19 @@ $flip=0;
                                         <table cellspacing="">
                          
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="tc/submng.php"><input type="button" value="SUBJECT MANAGE" style="color: #36AE19;height: 70px;width: 250px;font-size: 23px;"></a></td>
+                                                    <td style="padding-top: 20px" id='c1'><a href="admin/submng.php"><input type="button" value="SUBJECT MANAGE" style="color: #36AE19;height: 70px;width: 250px;font-size: 23px;"></a></td>
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="tc/rsltmng.php"><input type="button" value="RESULT MANAGE" style="color: #31AE79;height: 70px;width: 250px;font-size: 23px;"></a></td>
+                                                    <td style="padding-top: 20px" id='c1'><a href="admin/rsltmng.php"><input type="button" value="RESULT MANAGE" style="color: #31AE79;height: 70px;width: 250px;font-size: 23px;"></a></td>
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="tc/testmng.php?forpq=true"><input type="button" value="ADD QUESTIONS" style="color: #36AE70;height: 70px;width: 250px;font-size: 21px;"></a></td>
+                                                    <td style="padding-top: 20px" id='c1'><a href="admin/testmng.php?forpq=true"><input type="button" value="ADD QUESTIONS" style="color: #36AE70;height: 70px;width: 250px;font-size: 21px;"></a></td>
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td style="padding-top: 20px" id='c1'><a href="tc/testmng.php"><input type="button" value="TEST MANAGE" style="color: #36AF79;height: 70px;width: 250px;font-size: 23px;"></a></td>
+                                                    <td style="padding-top: 20px" id='c1'><a href="admin/testmng.php"><input type="button" value="TEST MANAGE" style="color: #36AF79;height: 70px;width: 250px;font-size: 23px;"></a></td>
                                                 </tr>
                                                 
                                                 <tr>

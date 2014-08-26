@@ -3,8 +3,9 @@
 
 error_reporting(0);
 session_start();
-//include_once '../oesdb.php';
-include('../header.php');
+
+     include('../lib.php');
+    include('../header.php');
 
 ?>
 
@@ -12,17 +13,31 @@ include('../header.php');
 
   <?php
 
-        if (!isset($_SESSION['admname'])){
+        if (!isset($_SESSION['admname']) && !isset($_SESSION['tcname'])){
             $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
         } 
 
         else if (isset($_REQUEST['logout'])){
-            unset($_SESSION['admname']);
-            header('Location: ../index.php');
+              if(isset($_SESSION['tcname'])){
+             
+                 unset($_SESSION['tcname']);
+                unset($_SESSION['stdname']);
+             }
+          
+           else
+             unset($_SESSION['admname']);
+       
+        header('Location: ../index.php');
         }
 
         else if (isset($_REQUEST['dashboard'])){
-            header('Location: ../stdwelcome.php');
+           
+             if(isset($_SESSION['tcname'])){
+                header('Location: ../stdwelcome.php?flip=1');
+             }
+
+             else
+                 header('Location: ../stdwelcome.php');
         }
 
         else if (isset($_REQUEST['delete'])){
@@ -32,7 +47,13 @@ include('../header.php');
                 if (is_numeric($variable)) { 
                     $hasvar = true;
 
-                    if (!@$db->query("delete from subject where subid=$variable")) {
+                     if(isset($_SESSION['tcname'])){
+                         $query=!@$db->query("delete from subject where subid=$variable and teacherid=" . $_SESSION['tcid'] . ";");
+                       }
+                    else   
+                         $query=!@$db->query("delete from subject where subid=$variable");
+                    
+                    if($query) {
                             $_GLOBALS['message'] = mysql_errno();
                     }
                 }
@@ -55,7 +76,12 @@ include('../header.php');
             }
             
             else{
-                $query = "update subject set subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "', subdesc='" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'where subid=" . $_REQUEST['subject'] . ";";
+                if(isset($_SESSION['tcname'])){
+                    $query = "update subject set subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "', subdesc='" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'where subid=" . $_REQUEST['subject'] . " AND teacherid=" . $_SESSION['tcid'] . ";";
+                }
+                else
+                   $query = "update subject set subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "', subdesc='" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'where subid=" . $_REQUEST['subject'] . ";";
+             
                 if (!@$db->query($query))
                     $_GLOBALS['message'] = mysql_error();
                 else
@@ -75,7 +101,11 @@ include('../header.php');
             else
                 $newstd=$r['sub']+1;
 
-            $result = $db->query("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "';");
+            if(isset($_SESSION['tcname'])){
+                $result = $db->query("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "' AND teacherid=" . $_SESSION['tcid'] . ";");
+            }
+            else
+                $result = $db->query("select subname as sub from subject where subname='" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "';");
             
             if (empty($_REQUEST['subname']) || empty($_REQUEST['subdesc'])) {
                 $_GLOBALS['message'] = "Some of the required Fields are Empty";
@@ -86,7 +116,13 @@ include('../header.php');
             } 
             
             else {
-                $query = "insert into subject values($newstd,'" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "',NULL)";
+                
+                if(isset($_SESSION['tcname'])){
+                    $query = "insert into subject values($newstd,'" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "'," . $_SESSION['tcid'] . ")";
+                  }
+                else
+                   $query = "insert into subject values($newstd,'" . htmlspecialchars($_REQUEST['subname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['subdesc'], ENT_QUOTES) . "',NULL)";
+               
                 if (!@$db->query($query)){
                         $_GLOBALS['message'] = mysql_error();
                 }
@@ -115,13 +151,20 @@ include('../header.php');
                                    <table id="menu"><tr>
                                    
                                     <?php
-                                    if(isset($_SESSION['admname'])){
+                                    if(isset($_SESSION['admname']) || isset($_SESSION['tcname'])){
 
-                                    ?>
-                                                             
-                                                            <td><input type="submit" value="Admin Home" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                  
-                                    <?php
+                                        if($_SESSION['tcname']){
+                                        ?>
+                                       <td><input type="submit" value="TEACHER HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+
+                                           <?php
+                                        }
+
+                                         else {?>
+                                       <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                       <?php
+                                         }              
+                                 
                                         if(!isset($_REQUEST['add']) && !isset($_REQUEST['edit'])){ 
                                     ?>
                                                             <td><input type="submit" value="Add Subject" name="add" class="subbtn" title="Add" style="color: #36AE79;height: 40px;width: 180px" /></td>
@@ -132,7 +175,11 @@ include('../header.php');
                                        ?> 
                                         
                                         <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
-                                                                                             echo $_SESSION['admname'];
+                                                                                               if(isset($_SESSION['tcname'])){
+                                                                                                        echo $_SESSION['tcname'];
+                                                                                                    }
+                                                                                                    else
+                                                                                                     echo $_SESSION['admname'];
                                                                        ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
                                    <?php     
                                     } 
@@ -149,7 +196,7 @@ include('../header.php');
                                     }
                                   
                          
-                             if (isset($_SESSION['admname'])) {
+                             if (isset($_SESSION['admname']) || isset($_SESSION['tcname'])) {
                                             if (isset($_REQUEST['add'])) {
                                         ?>
                                                            <table cellpadding="20" cellspacing="20" style="text-align:left;margin-left:15em" >
@@ -176,8 +223,12 @@ include('../header.php');
                                         
                                         
                                             else if (isset($_REQUEST['edit'])){
-
-                                                $result = $db->query("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                                                
+                                                 if(isset($_SESSION['tcname'])){
+                                                     $result = $db->query("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and teacherid=" . $_SESSION['tcid'] . ";");
+                                                   }
+                                               else
+                                                   $result = $db->query("select subid,subname,subdesc from subject where subname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                                                 
                                                     if (mysql_num_rows($result) == 0){
                                                         header('submng.php');
@@ -197,10 +248,10 @@ include('../header.php');
                                                                         <td><textarea name="subdesc" cols="20" rows="3"><?php echo htmlspecialchars_decode($r['subdesc'], ENT_QUOTES); ?></textarea><input type="hidden" name="subject" value="<?php echo $r['subid']; ?>"/></td>
                                                                     </tr>
                                                                     
-                                                                    <tr>
-                                                                        <td><input type="submit" value="Save" name="savem" class="subbtn" onclick="validatesubform('submng')" title="Save the changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                                                                        <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>                                                         
-                                                                   </tr>
+                                                                  <tr>
+                                                                    <td><input type="submit" value="Save" name="savea" class="subbtn" onclick="validatesubform('submng')" title="Save the Changes" style="color: #36AE79;height: 40px;width: 180px" /></td>
+    `                                                               <td><input type="submit" value="Cancel" name="cancel" class="subbtn" title="Cancel" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                                                </tr>
                                                                 </table>
                                             <?php
                                                                 $db->_destruct();
@@ -208,8 +259,14 @@ include('../header.php');
                                                 }
                                                 
                                              else{
+                                                 
+                                                   if(isset($_SESSION['tcname'])){
+                                                       $result = $db->query("select * from subject where teacherid=" . $_SESSION['tcid'] . " order by subid;");
+                                                   }
+                                                   else
                                                     $result = $db->query("select * from subject order by subid;");
                                                     
+                                                   
                                                     if (mysql_num_rows($result) == 0){
                                                         echo "<h3 style=\"color:#0000cc;text-align:center;\">No Subjets Yet..!</h3>";
                                                     } 
@@ -239,10 +296,11 @@ include('../header.php');
                                                         </table>
                                     <?php
                                                     }
-                                                    $db->_destruct();
-                                               }
-                                 }
-                              ?>
+                                                    $db->_destruct(); 
+                                      }
+                             }
+                       ?>
+
 
                 </div>
             </form>

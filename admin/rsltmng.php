@@ -1,7 +1,10 @@
 <?php
 error_reporting(0);
 session_start();
+
+include('../lib.php');
 include('../header.php');
+
 
 $attemptarr=array();
 $colums=array();
@@ -11,19 +14,33 @@ $colums=array();
 
 <?php
 
-  if(!isset($_SESSION['admname'])) {
+  if(!isset($_SESSION['admname']) && !isset($_SESSION['tcname'])) {
     $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
    }
    
    else if(isset($_REQUEST['logout'])) {
-        unset($_SESSION['admname']);
+        
+        
+        if(isset($_SESSION['tcname'])){
+            unset($_SESSION['tcname']);
+            unset($_SESSION['stdname']);
+        }
+        
+       else
+         unset($_SESSION['admname']);
+       
         header('Location: ../index.php');
     }
     
     else if(isset($_REQUEST['dashboard'])){
-            header('Location: ../stdwelcome.php');
-
+            // $_SESSION['bool']=1;
+        if(isset($_SESSION['tcname'])){
+           header('Location: ../stdwelcome.php?flip=1');
         }
+        
+        else
+            header('Location: ../stdwelcome.php');
+      }
         
         else if(isset($_REQUEST['back'])){
                 header('Location: rsltmng.php');
@@ -31,13 +48,6 @@ $colums=array();
             }
 
   ?>
-
-  <html>
-    <head>
-        <title>Manage Results</title>
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
-    </head>
-    
     <body>
         
        
@@ -54,22 +64,39 @@ $colums=array();
                         
                         
                           <?php 
-                              if(isset($_SESSION['admname'])) {
-                            ?>
-                               <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
-                                                                                             echo $_SESSION['admname'];
-                                       ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
-                          <?php 
+                              if(isset($_SESSION['admname']) || isset($_SESSION['tcname']) ) {
+                          
                              if(isset($_REQUEST['testid'])) {
                            ?>
                                <td><input type="submit" value="Back" name="back" class="subbtn" title="Manage Results" style="color: #36AE79;height: 40px;width: 180px" /></td>
                         
                           <?php 
                              }
-                            else{ ?>
+                            else{ 
+                                
+                                if($_SESSION['tcname']){
+                                ?>
+                               <td><input type="submit" value="TEACHER HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                                
+                                   <?php
+                                }
+                                
+                                 else {?>
                                <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                            <?php
+                               <?php
+                                 }
                             } 
+                            ?>
+                            <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
+                                                                                            if(isset($_SESSION['admname'])){
+                                                                                             echo $_SESSION['admname'];
+                                                                                            }
+                                                                                            
+                                                                                            else if($_SESSION['tcname']){
+                                                                                               echo $_SESSION['tcname']; 
+                                                                                            }
+                                       ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
+                        <?php
                             ?>
                                
                                
@@ -190,9 +217,15 @@ $colums=array();
                      }
                   
                    else {
-
+                       
+                       if(isset($_SESSION['tcname'])){
+                            $result= $db->query("select t.testid,t.testname,DATE_FORMAT(t.testfrom,'%d %M %Y') as fromdate,DATE_FORMAT(t.testto,'%d %M %Y %H:%i:%S') as todate,sub.subname,(select count(stdid) from studenttest where testid=t.testid) as attemptedstudents from test as t, subject as sub where sub.subid=t.subid and t.teacherid=".$_SESSION['tcid'].";");
+                       }
+                       
+                       else
                           $result=$db->query("select t.testid,t.testname,DATE_FORMAT(t.testfrom,'%d %M %Y') as fromdate,DATE_FORMAT(t.testto,'%d %M %Y %H:%i:%S') as todate,sub.subname,(select count(stdid) from studenttest where testid=t.testid) as attemptedstudents from test as t, subject as sub where sub.subid=t.subid;");
-                                if(mysql_num_rows($result)==0) {
+                             
+                             if(mysql_num_rows($result)==0) {
                                     echo "<h3 style=\"color:#0000cc;text-align:center;\">No Tests Yet...!</h3>";
                                 }
                                 

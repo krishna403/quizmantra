@@ -12,17 +12,32 @@ session_start();
 
 <?php
 
-    if (!isset($_SESSION['admname'])) {
+    if (!isset($_SESSION['admname']) && !isset($_SESSION['tcname'])) {
         $_GLOBALS['message'] = "Session Timeout.Click here to <a href=\"../index.php\">Re-LogIn</a>";
     }
     
+    
     else if (isset($_REQUEST['logout'])) {
-       unset($_SESSION['admname']);
-      header('Location: ../index.php');
+        if(isset($_SESSION['tcname'])){
+             
+                 unset($_SESSION['tcname']);
+                unset($_SESSION['stdname']);
+             }
+          
+           else
+             unset($_SESSION['admname']);
+       
+        header('Location: ../index.php');
     }
+    
 
     else if (isset($_REQUEST['dashboard'])) {
-        header('Location: ../stdwelcome.php');
+         if(isset($_SESSION['tcname'])){
+                header('Location: ../stdwelcome.php?flip=1');
+             }
+
+             else
+                 header('Location: ../stdwelcome.php');
     }
     
     else if (isset($_REQUEST['delete'])) {
@@ -35,10 +50,14 @@ session_start();
                     if (is_numeric($variable)) { 
                        $hasvar = true;
 
-                       if (!@$db->query("delete from test where testid=$variable")) {
-                           if (mysql_errno () == 1451)
-                                $_GLOBALS['message'] = "Too Prevent accidental deletions, system will not allow propagated deletions.<br/><b>Help:</b> If you still want to delete this test, then first delete the questions that are associated with it.";
-                           else
+                       if(isset($_SESSION['tcname'])){
+                           $query=!@$db->query("delete from test where testid=$variable and teacherid=" . $_SESSION['tcid'] . ";");
+                       }
+                       
+                       else
+                           $query=!@$db->query("delete from test where testid=$variable");
+                      
+                       if($query){
                                $_GLOBALS['message'] = mysql_errno();
                         }
                     }
@@ -81,7 +100,12 @@ session_start();
                 } 
                 
                 else {
-                    $query = "update test set testname='" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "',testdesc='" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',subid=" . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",testfrom='" . $fromtime . "',testto='" . $totime . "',duration=" . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . ",totalquestions=" . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",testcode='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'where testid=" . $_REQUEST['testid'] . ";";
+                    if(isset($_SESSION['tcname'])){
+                     $query = "update test set testname='" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "',testdesc='" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',subid=" . $_REQUEST['subject'] . ",testfrom='" . $fromtime . "',testto='" . $totime . "',duration=" . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . ",totalquestions=" . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",testcode='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'where testid=" . $_REQUEST['testid'] . " and teacherid=" . $_SESSION['tcid'] . ";";
+           
+                    }
+                    else
+                       $query = "update test set testname='" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "',testdesc='" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',subid=" . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",testfrom='" . $fromtime . "',testto='" . $totime . "',duration=" . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . ",totalquestions=" . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",testcode='" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'where testid=" . $_REQUEST['testid'] . ";";
                    
                     if (!@$db->query($query))
                         $_GLOBALS['message'] = mysql_error();
@@ -131,12 +155,13 @@ session_start();
                              
                           else if ($noerror){
                              
-                               $query = "insert into test values($newstd,'" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',(select curDate()),(select curTime())," . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",'" . $fromtime . "','" . $totime . "'," . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . "," . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",0,'" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "',NULL)";
+                              if(isset($_SESSION['tcname'])){
+                                   $query = "insert into test values($newstd,'" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',(select curDate()),(select curTime())," . $_REQUEST['subject'] . ",'" . $fromtime . "','" . $totime . "'," . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . "," . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",0,'" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "'," . $_SESSION['tcid'] . ")";
+                              }
+                              else
+                                $query = "insert into test values($newstd,'" . htmlspecialchars($_REQUEST['testname'], ENT_QUOTES) . "','" . htmlspecialchars($_REQUEST['testdesc'], ENT_QUOTES) . "',(select curDate()),(select curTime())," . htmlspecialchars($_REQUEST['subject'], ENT_QUOTES) . ",'" . $fromtime . "','" . $totime . "'," . htmlspecialchars($_REQUEST['duration'], ENT_QUOTES) . "," . htmlspecialchars($_REQUEST['totalqn'], ENT_QUOTES) . ",0,'" . htmlspecialchars($_REQUEST['testcode'], ENT_QUOTES) . "',NULL)";
       
                                if (!@$db->query($query)) {
-                                   if (mysql_errno () == 1062)
-                                       $_GLOBALS['message'] = "Given Test Name voilates some constraints, please try with some other name.";
-                                   else
                                        $_GLOBALS['message'] = mysql_error();
                                }
       
@@ -153,27 +178,26 @@ session_start();
              }
              
              
-            else if(isset($_REQUEST['manageqn'])) {
+            else if(isset($_REQUEST['manageqn'])){
 
                         $testname = $_REQUEST['manageqn'];
-                        $result = $db->query("select testid from test where testname='" . htmlspecialchars($testname, ENT_QUOTES) . "';");
+                        
+                        if(isset($_SESSION['tcname'])){
+                            $result = $db->query("select testid from test where testname='$testname' and teacherid=" . $_SESSION['tcid'] . ";");
+                        }
+                        
+                        else
+                           $result = $db->query("select testid from test where testname='" . htmlspecialchars($testname, ENT_QUOTES) . "';");
 
                             if ($r = mysql_fetch_array($result)) {
                                 $_SESSION['testname']=$testname;
                                 $_SESSION['testqn']=$r['testid'];
 
                                 header('Location: prepqn.php');
-                            }
+                           }
                 }   
       ?>
 
-
-
-    <html>
-        <head>
-        <title>Manage Tests</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <link rel="stylesheet" type="text/css" href="sc.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../calendar/jsDatePick.css" />
         <script type="text/javascript" src="../calendar/jsDatePick.full.1.1.js"></script>
         <script type="text/javascript">
@@ -193,13 +217,10 @@ session_start();
         </script>
 
         <script type="text/javascript" src="../validate.js" ></script>
-    </head>
         
         
         <body id="test">
             
-            
-              
                         <div id="container">
                             <div class="header">
 
@@ -212,19 +233,31 @@ session_start();
                                         
                                         
                         <?php
-                        if (isset($_SESSION['admname'])) {
+                        if (isset($_SESSION['admname']) || isset($_SESSION['tcname'])) {
+                         
+                        if($_SESSION['tcname']){
                         ?>
-                                                <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                       <td><input type="submit" value="TEACHER HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
 
-                           
-                        <?php
-                            if(!isset($_REQUEST['add']) && !isset($_REQUEST['edit'])){ 
+                           <?php
+                        }
+
+                         else {?>
+                       <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                       <?php
+                         }
+                         
+                      if(!isset($_REQUEST['add']) && !isset($_REQUEST['edit'])){ 
                         ?>
                                                 <td><input type="submit" value="Delete" name="delete" class="subbtn" title="Delete" style="color: #36AE79;height: 40px;width: 180px" /></td>
                                                 <td><input type="submit" value="Add" name="add" class="subbtn" title="Add" style="color: #36AE79;height: 40px;width: 180px" /></td>
                         <?php }
                          ?>
                          <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
+                                                                                                    if(isset($_SESSION['tcname'])){
+                                                                                                        echo $_SESSION['tcname'];
+                                                                                                    }
+                                                                                                    else
                                                                                                      echo $_SESSION['admname'];
 
                                                       ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
@@ -244,7 +277,7 @@ session_start();
                     echo "<div class=\"message\" style='float:right;'><font color='#A80707'><b>".$_GLOBALS['message']."</font></b></div>";
                  }
                 
-                if (isset($_SESSION['admname'])) {
+                if (isset($_SESSION['admname']) || isset($_SESSION['tcname'])) {
 
                     if (isset($_REQUEST['forpq']))
                         echo "<div class=\"pmsg\" style=\"text-align:center\"> Which test questions Do you want to Manage? <br/><b>Help:</b>Click on Questions button to manage the questions of respective tests</div>";
@@ -262,7 +295,13 @@ session_start();
                
 
                  <?php
-                        $result = $db->query("select subid,subname from subject;");
+                 
+                  if(isset($_SESSION['tcname'])){
+                    $result = $db->query("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
+                  }
+                  
+                  else
+                     $result = $db->query("select subid,subname from subject;");
                         
                             while ($r = mysql_fetch_array($result)) {
                                 echo "<option value=\"" . $r['subid'] . "\">" . htmlspecialchars_decode($r['subname'], ENT_QUOTES) . "</option>";
@@ -329,11 +368,16 @@ session_start();
                     
                     else if (isset($_REQUEST['edit'])){
 
-                        $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
+                        if(isset($_SESSION['tcname'])){
+                           $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "' and t.teacherid=" . $_SESSION['tcid'] . ";");
+                        }
+                        
+                        else
+                           $result = $db->query("select t.totalquestions,t.duration,t.testid,t.testname,t.testdesc,t.subid,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%Y-%m-%d') as testfrom,DATE_FORMAT(t.testto,'%Y-%m-%d') as testto from test as t,subject as s where t.subid=s.subid and t.testname='" . htmlspecialchars($_REQUEST['edit'], ENT_QUOTES) . "';");
                         
                         if (mysql_num_rows($result) == 0) {
                             header('Location: testmng.php');
-                         } 
+                        } 
                          
                         else if ($r = mysql_fetch_array($result)) {
 
@@ -344,7 +388,12 @@ session_start();
                                             <td>
                                                 <select name="subject">
                    <?php
-                            $result = $db->query("select subid,subname from subject;");
+                        if(isset($_SESSION['tcname'])){
+                            $result = $db->query("select subid,subname from subject where teacherid=" . $_SESSION['tcid'] . ";");
+                         }
+                          
+                      else
+                          $result = $db->query("select subid,subname from subject;");
                             
                             while ($r1 = mysql_fetch_array($result)) {
                                 if (strcmp($r['subname'], $r1['subname']) == 0)
@@ -411,7 +460,12 @@ session_start();
                     }
 
                   else {
-
+                      
+                    if(isset($_SESSION['tcname'])){
+                      $result = $db->query("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid and t.teacherid=" . $_SESSION['tcid'] . " order by t.testdate desc,t.testtime desc;");
+                    }  
+                    
+                    else
                         $result = $db->query("select t.testid,t.testname,t.testdesc,s.subname,t.testcode as tcode,DATE_FORMAT(t.testfrom,'%d-%M-%Y') as testfrom,DATE_FORMAT(t.testto,'%d-%M-%Y %H:%i:%s %p') as testto from test as t,subject as s where t.subid=s.subid order by t.testdate desc,t.testtime desc;");
                             
                         if (mysql_num_rows($result) == 0) {

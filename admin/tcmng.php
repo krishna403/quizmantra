@@ -21,7 +21,13 @@ include('../header.php');
   }
 
   else if (isset($_REQUEST['dashboard'])) {
-    header('Location: ../stdwelcome.php');
+   
+      if(isset($_SESSION['tcname'])){
+           header('Location: ../stdwelcome.php?flip=1');
+        }
+        
+        else
+            header('Location: ../stdwelcome.php');
   }
   
   
@@ -128,19 +134,35 @@ include('../header.php');
                
                  <?php
                      if (isset($_SESSION['admname'])){
-                ?>
-                        <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
-                 <?php
-                    if(!isset($_REQUEST['category']) && !isset($_REQUEST['edit']) ) {  
+                 
+                        
+                    if($_SESSION['tcname']){
                  ?>
-                       
+                        <td><input type="submit" value="TEACHER HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                <?php
+                     }
+
+                     else {
+                  ?>
+                        <td><input type="submit" value="ADMIN HOME" name="dashboard" class="subbtn" title="Dash Board" style="color: #36AE79;height: 40px;width: 180px" /></td>
+                <?php
+                     }
+                
+                    if(!isset($_REQUEST['category']) && !isset($_REQUEST['edit'])){  
+                 ?>
                         <td><input type="submit" value="Create Teacher" name="add" class="subbtn" title="Add" style="color: #36AE79;height: 40px;width: 180px"/></td>
                         <td><input type="submit" value="Delete" name="delete" class="subbtn" title="Delete" style="color: #36AE79;height: 40px;width: 180px" /></td>
                  <?php
                   }
                 ?>
             <td style="padding-left:50px;"><b> Hello </b><font color='#74D8FF'><b><?php 
+                                                                                          if(isset($_SESSION['admname'])){
                                                                                              echo $_SESSION['admname'];
+                                                                                            }
+                                                                                            
+                                                                                            else if($_SESSION['tcname']){
+                                                                                               echo $_SESSION['tcname']; 
+                                                                                            }
                                        ?></b></font> ,Welcome to <b>Quiz Mantra | <input type="submit" value="LogOut" name="logout" class="subbtn" title="Log Out" style="color: #36AE79;height: 40px;width: 180px" /></b></td>
            
            

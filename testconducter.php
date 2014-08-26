@@ -9,10 +9,11 @@ session_start();
   ?>
 
  <fieldset class="loginwall3">
- <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">VIEW RESULT</b></font> </legend>
+ <fieldset><legend><font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">TEST STARTED</b></font> </legend>
 
 <?php
       
+      $final=false;
       testconductor();
  
  ?>

@@ -13,31 +13,7 @@ session_start();
 
 <?php
 
-    if(!isset($_SESSION['stdname'])) {
-        $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
-    }
-    else if(isset($_REQUEST['logout'])){
-           unset($_SESSION['stdname']);
-           header('Location: index.php');
-    }
-
-    else if(isset($_REQUEST['dashboard'])){
-         header('Location: stdwelcome.php');
-     }
-    
-    else if(isset($_REQUEST['change'])){
-       $_SESSION['qn']=substr($_REQUEST['change'],7);
-         header('Location: testconductor.php');
-    }
-    
-    else if(isset($_REQUEST['finalsubmit'])){
-       header('Location: testack.php');
-       //  header('Location: testack.php');
-    } 
-    
-     else if(isset($_REQUEST['fs'])){
-      header('Location: testack.php');
-    }
+      summary();  // calling function
 
 ?>
 
@@ -90,7 +66,7 @@ session_start();
          
        
       <div class="page">
-                 <table border="0" width="100%" class="ntab">
+                 <table border="0" width="100%" class="ntab" align="center">
                   <tr>
                       <th style="width:40%;"><h3><span id="timer" class="timerclass"></span></h3></th>
                       
@@ -113,7 +89,7 @@ session_start();
                         {
                            //editing components
                  ?>
-          <table cellpadding="30" cellspacing="10" class="datatable">
+          <table cellpadding="30" cellspacing="10" class="datatable" align="center">
                         <tr>
                             <th>Question No</th>
                             <th>Status</th>

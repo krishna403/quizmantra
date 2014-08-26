@@ -151,8 +151,6 @@ session_start();
                            else {
                           ?>
                    
-                
-                         
                  
                  
                  <table cellpadding="30" cellspacing="10" class="datatable" border="1" width="100%">
