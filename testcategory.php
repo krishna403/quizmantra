@@ -84,7 +84,7 @@ error_reporting(0);
                                                          ?> 
                                                 <tr><td><?php
 
-                                                               echo "<select style='height:40px;width:200px;' name='cat' onchange=\"reload(this.form)\"><option value=''>Select one</option>";
+                                                               echo "<select style='height:40px;width:200px;' name='cat' onchange=\"reload(this.form)\"><option value=''><b> Category/Subject </b></option>";
 
                                                                     while($row2 = mysql_fetch_array($quer2)){
                                                                            $subid=$row2['subid'];
@@ -103,7 +103,7 @@ error_reporting(0);
                                                                ?>
                                                 </td><td><div style="border-left:2px solid #36AE79;height:100px"></div></td><td><?php
 
-                                                               echo "<select style='height:40px;width:200px;' name='subcat'><option value=''>Select one</option>";
+                                                               echo "<select style='height:40px;width:200px;' name='subcat'><option value=''><b> Choose Test </b></option>";
 
                                                                      while($row=mysql_fetch_array($quer)){
                                                                          $testname=$row['testname'];

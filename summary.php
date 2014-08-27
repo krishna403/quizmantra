@@ -13,7 +13,31 @@ session_start();
 
 <?php
 
-      summary();  // calling function
+       if(!isset($_SESSION['stdname'])) {
+            $_GLOBALS['message']="Session Timeout.Click here to <a href=\"index.php\">Re-LogIn</a>";
+        }
+        else if(isset($_REQUEST['logout'])){
+               unset($_SESSION['stdname']);
+               header('Location: index.php');
+        }
+
+        else if(isset($_REQUEST['dashboard'])){
+             header('Location: stdwelcome.php');
+         }
+
+        else if(isset($_REQUEST['change'])){
+           $_SESSION['qn']=substr($_REQUEST['change'],7);
+             header('Location: testconducter.php');
+        }
+
+        else if(isset($_REQUEST['finalsubmit'])){
+           header('Location: testack.php');
+           //  header('Location: testack.php');
+        } 
+
+         else if(isset($_REQUEST['fs'])){
+          header('Location: testack.php');
+        }
 
 ?>
 

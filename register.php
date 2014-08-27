@@ -22,12 +22,12 @@
    <body id="register">
         <div id="container">
             <div class="menubar" style="padding-left: 50%;">
-                             <table id="menu"><tr>
-                                        <?php if(isset($_SESSION['stdname'])){
-                                              header('Location: stdwelcome.php');
-                                          }
+                <table id="menu"><tr>
+                       <?php if(isset($_SESSION['stdname'])){
+                             header('Location: stdwelcome.php');
+                       }        
 
-                                        else{    
+                                       else{    
                                          ?>
                                                <td><div class="aclass"><a href="home.php" title="Back To Home"><button id="signin" style="color: #36AE79;height: 40px;width: 180px">Home</button></a></div></td>
                                                <td><div class="aclass"><a href="index.php" title="Click here  to Login"><button id="signin" style="color: #36AE79;height: 40px;width: 180px">Login</button></a></div></td>
@@ -42,9 +42,9 @@
           
             <fieldset><legend>
            
-              <?php if(!$success): ?>
+              <?php if(!$success) ?>
                   <font color='black'  size="6"><b style="font-family:  'Hoefler Text', Georgia, 'Times New Roman', serif;">REGISTRATION </b></font> 
-              <?php endif; ?>
+              <?php// endif; ?>
         
             </legend>
                 
